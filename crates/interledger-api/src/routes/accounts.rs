@@ -369,7 +369,7 @@ where
                     })
                     .await?;
 
-                    debug!("Sent SPSP payment, receipt: {:?}", receipt);
+                    println!("[MY_LOG DEBUG] {} {}:{}",module_path!() ,file!(), line!()); debug!("Sent SPSP payment, receipt: {:?}", receipt);
                     Ok::<Json, Rejection>(warp::reply::json(&json!(receipt)))
                 }
             },
@@ -506,7 +506,7 @@ where
     A: CcpRoutingAccount + Clone + Send + Sync + 'static,
     S: NodeStore<Account = A> + AddressStore + Clone + Send + Sync + 'static,
 {
-    debug!(
+    println!("[MY_LOG DEBUG] {} {}:{}",module_path!() ,file!(), line!()); debug!(
         "Getting ILP address from parent account: {} (id: {})",
         parent.username(),
         parent.id()
@@ -534,10 +534,10 @@ where
         error!("{}", msg);
         ApiError::internal_server_error().detail(msg)
     })?;
-    debug!("Got ILDCP response from parent: {:?}", info);
+    println!("[MY_LOG DEBUG] {} {}:{}",module_path!() ,file!(), line!()); debug!("Got ILDCP response from parent: {:?}", info);
     let ilp_address = info.ilp_address();
 
-    debug!("ILP address is now: {}", ilp_address);
+    println!("[MY_LOG DEBUG] {} {}:{}",module_path!() ,file!(), line!()); debug!("ILP address is now: {}", ilp_address);
     // TODO we may want to make this trigger the CcpRouteManager to request
     let prepare = RouteControlRequest {
         mode: Mode::Sync,
@@ -554,7 +554,7 @@ where
     store.set_ilp_address(ilp_address).await?;
 
     // Get the parent's routes for us
-    debug!("Asking for routes from {:?}", parent.clone());
+    println!("[MY_LOG DEBUG] {} {}:{}",module_path!() ,file!(), line!()); debug!("Asking for routes from {:?}", parent.clone());
     service
         .send_request(OutgoingRequest {
             from: parent.clone(),

@@ -202,7 +202,7 @@ where
         let current_ilp_address = self.ilp_address.read();
         let ilp_address = self.store.get_ilp_address();
         if ilp_address != *current_ilp_address {
-            debug!(
+            println!("[MY_LOG DEBUG] {} {}:{}",module_path!() ,file!(), line!()); debug!(
                 "Changing ILP address from {} to {}",
                 *current_ilp_address, ilp_address
             );
@@ -254,7 +254,7 @@ where
             .build());
         }
         let control = control.unwrap();
-        debug!(
+        println!("[MY_LOG DEBUG] {} {}:{}",module_path!() ,file!(), line!()); debug!(
             "Got route control request from account {} (id: {}): {:?}",
             request.from.username(),
             request.from.id(),
@@ -270,7 +270,7 @@ where
                 println!("[MY_LOG TRACE] {} {}:{}",module_path!() ,file!(), line!()); trace!("Checking whether account was previously listed as unavailable");
                 let mut unavailable_accounts = self.unavailable_accounts.lock();
                 if unavailable_accounts.remove(&request.from.id()).is_some() {
-                    debug!("Account {} (id: {}) is no longer unavailable, will resume broadcasting routes to it",
+                    println!("[MY_LOG DEBUG] {} {}:{}",module_path!() ,file!(), line!()); debug!("Account {} (id: {}) is no longer unavailable, will resume broadcasting routes to it",
                             request.from.username(),
                             request.from.id());
                 }
@@ -371,7 +371,7 @@ where
             .build());
         }
         let update = update.unwrap();
-        debug!(
+        println!("[MY_LOG DEBUG] {} {}:{}",module_path!() ,file!(), line!()); debug!(
             "Got route update request from account {}: {:?}",
             request.from.id(),
             update
@@ -405,7 +405,7 @@ where
                     return Ok(CCP_RESPONSE.clone());
                 }
 
-                debug!(
+                println!("[MY_LOG DEBUG] {} {}:{}",module_path!() ,file!(), line!()); debug!(
                     "Recalculating best routes for prefixes: {}",
                     prefixes_updated.join(", ")
                 );
@@ -485,7 +485,7 @@ where
             last_known_epoch,
             features: Vec::new(),
         };
-        debug!("Sending Route Control Request to account: {} (id: {}), last known table id: {}, last known epoch: {}",
+        println!("[MY_LOG DEBUG] {} {}:{}",module_path!() ,file!(), line!()); debug!("Sending Route Control Request to account: {} (id: {}), last known table id: {}, last known epoch: {}",
             account.username(),
             account_id,
             hex::encode(&last_known_routing_table_id[..]),
@@ -591,7 +591,7 @@ where
                 let mut new_routes: Vec<Route> = Vec::with_capacity(better_routes.len());
 
                 for (prefix, account, mut route) in better_routes {
-                    debug!(
+                    println!("[MY_LOG DEBUG] {} {}:{}",module_path!() ,file!(), line!()); debug!(
                         "Setting new route for prefix: {} -> Account: {} (id: {})",
                         prefix,
                         account.username(),
@@ -634,7 +634,7 @@ where
                 }
 
                 for prefix in withdrawn_routes.iter() {
-                    debug!("Removed route for prefix: {}", prefix);
+                    println!("[MY_LOG DEBUG] {} {}:{}",module_path!() ,file!(), line!()); debug!("Removed route for prefix: {}", prefix);
                     local_table.delete_route(prefix);
                     forwarding_table.delete_route(prefix);
                 }
@@ -769,7 +769,7 @@ where
                     }
                     (_, Ok(_)) => {
                         if unavailable_accounts.remove(&account.id()).is_some() {
-                            debug!("Account {} (id: {}) is no longer unavailable, resuming route broadcasts", account.username(), account.id());
+                            println!("[MY_LOG DEBUG] {} {}:{}",module_path!() ,file!(), line!()); debug!("Account {} (id: {}) is no longer unavailable, resuming route broadcasts", account.username(), account.id());
                         }
                     }
                 }
@@ -866,7 +866,7 @@ where
             .create_route_update(from_epoch_index, to_epoch_index)
             .to_prepare();
         let account_id = account.id();
-        debug!(
+        println!("[MY_LOG DEBUG] {} {}:{}",module_path!() ,file!(), line!()); debug!(
             "Sending individual route update to account: {} for epochs from: {} to: {}",
             account_id, from_epoch_index, to_epoch_index
         );

@@ -124,7 +124,7 @@ where
         request: RouteUpdateRequest,
     ) -> Result<Vec<String>, String> {
         if self.id != request.routing_table_id {
-            debug!(
+            println!("[MY_LOG DEBUG] {} {}:{}",module_path!() ,file!(), line!()); debug!(
                 "Saw new routing table. Old ID: {}, new ID: {}",
                 hex::encode(&self.id[..]),
                 hex::encode(&request.routing_table_id[..])

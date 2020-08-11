@@ -108,7 +108,7 @@ async fn handle_message<A: BtpAccount>(
                 }
             }
             Err(_) => {
-                debug!("Unable to parse ILP packet from BTP packet (if this is the first time this appears, the packet was probably the auth response)");
+                println!("[MY_LOG DEBUG] {} {}:{}",module_path!() ,file!(), line!()); debug!("Unable to parse ILP packet from BTP packet (if this is the first time this appears, the packet was probably the auth response)");
                 // TODO Send error back
             }
         }
@@ -150,7 +150,7 @@ where
     // TODO is there some more automatic way of knowing when we should close the connections?
     // The problem is that the WS client can be a server too, so it's not clear when we are done with it
     pub fn close(&self) {
-        debug!("Closing all WebSocket connections");
+        println!("[MY_LOG DEBUG] {} {}:{}",module_path!() ,file!(), line!()); debug!("Closing all WebSocket connections");
         self.close_all_connections.lock().take();
     }
 
@@ -173,7 +173,7 @@ where
         // Responsible mainly for responding to Pings
         let write_to_ws = client_rx.map(Ok).forward(write).then(move |_| {
             async move {
-                debug!(
+                println!("[MY_LOG DEBUG] {} {}:{}",module_path!() ,file!(), line!()); debug!(
                     "Finished forwarding to WebSocket stream for account: {}",
                     account_id
                 );
@@ -202,7 +202,7 @@ where
         let read = valve.wrap(read); // close when `write_to_ws` calls `drop(connection)`
         let read = self.stream_valve.wrap(read);
         let read_from_ws = read.for_each(handle_message_fn).then(move |_| async move {
-            debug!(
+            println!("[MY_LOG DEBUG] {} {}:{}",module_path!() ,file!(), line!()); debug!(
                 "Finished reading from WebSocket stream for account: {}",
                 account_id
             );

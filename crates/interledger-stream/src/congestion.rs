@@ -74,7 +74,7 @@ impl CongestionController {
     pub fn prepare(&mut self, amount: u64) {
         if amount > 0 {
             self.amount_in_flight += amount;
-            debug!(
+            println!("[MY_LOG DEBUG] {} {}:{}",module_path!() ,file!(), line!()); debug!(
                 "Prepare packet of {}, amount in flight is now: {}",
                 amount, self.amount_in_flight
             );
@@ -97,7 +97,7 @@ impl CongestionController {
             } else {
                 self.max_in_flight = u64::max_value();
             }
-            debug!(
+            println!("[MY_LOG DEBUG] {} {}:{}",module_path!() ,file!(), line!()); debug!(
                 "Fulfilled packet of {}, doubling max in flight to: {}",
                 prepare_amount, self.max_in_flight
             );
@@ -108,7 +108,7 @@ impl CongestionController {
             } else {
                 self.max_in_flight = u64::max_value();
             }
-            debug!(
+            println!("[MY_LOG DEBUG] {} {}:{}",module_path!() ,file!(), line!()); debug!(
                 "Fulfilled packet of {}, increasing max in flight to: {}",
                 prepare_amount, self.max_in_flight
             );
@@ -130,7 +130,7 @@ impl CongestionController {
                     (self.max_in_flight as f64 / self.decrease_factor).floor() as u64,
                     1,
                 );
-                debug!("Rejected packet with T04 error. Amount in flight was: {}, decreasing max in flight to: {}", self.amount_in_flight + prepare_amount, self.max_in_flight);
+                println!("[MY_LOG DEBUG] {} {}:{}",module_path!() ,file!(), line!()); debug!("Rejected packet with T04 error. Amount in flight was: {}, decreasing max in flight to: {}", self.amount_in_flight + prepare_amount, self.max_in_flight);
 
                 #[cfg(feature = "metrics_csv")]
                 self.log_stats(0);

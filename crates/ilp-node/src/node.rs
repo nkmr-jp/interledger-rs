@@ -313,7 +313,7 @@ impl InterledgerNode {
             + Sync
             + 'static,
     {
-        debug!(target: "interledger-node",
+        println!("[MY_LOG DEBUG] {} {}:{}",module_path!() ,file!(), line!()); debug!(target: "interledger-node",
             "Starting Interledger node with ILP address: {}",
             ilp_address
         );
@@ -565,7 +565,7 @@ impl InterledgerNode {
                                         ApiError::internal_server_error()
                                             .detail(format!("could not apply new log level: {}", err))
                                     })?;
-                                    debug!(target: "interledger-node", "Logging level adjusted to {}", new_level_str);
+                                    println!("[MY_LOG DEBUG] {} {}:{}",module_path!() ,file!(), line!()); debug!(target: "interledger-node", "Logging level adjusted to {}", new_level_str);
                                     Ok::<String, warp::Rejection>(format!(
                                         "Logging level changed to: {}",
                                         new_level_str
@@ -584,12 +584,12 @@ impl InterledgerNode {
             .with(warp::log("interledger-api"))
             .boxed();
 
-        info!(target: "interledger-node", "Interledger.rs node HTTP API listening on: {}", http_bind_address);
+        println!("[MY_LOG INFO] {} {}:{}",module_path!() ,file!(), line!()); info!(target: "interledger-node", "Interledger.rs node HTTP API listening on: {}", http_bind_address);
         spawn(warp::serve(api).bind(http_bind_address));
 
         // Settlement API
         let settlement_api = create_settlements_filter(store.clone(), outgoing_service.clone());
-        info!(target: "interledger-node", "Settlement API listening on: {}", settlement_api_bind_address);
+        println!("[MY_LOG INFO] {} {}:{}",module_path!() ,file!(), line!()); info!(target: "interledger-node", "Settlement API listening on: {}", settlement_api_bind_address);
         spawn(warp::serve(settlement_api).bind(settlement_api_bind_address));
 
         // Exchange Rate Polling
@@ -602,7 +602,7 @@ impl InterledgerNode {
             exchange_rate_fetcher
                 .spawn_interval(Duration::from_millis(exchange_rate_poll_interval));
         } else {
-            debug!(target: "interledger-node", "Not using exchange rate provider. Rates must be set via the HTTP API");
+            println!("[MY_LOG DEBUG] {} {}:{}",module_path!() ,file!(), line!()); debug!(target: "interledger-node", "Not using exchange rate provider. Rates must be set via the HTTP API");
         }
 
         Ok(())

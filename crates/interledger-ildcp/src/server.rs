@@ -41,7 +41,7 @@ where
                 asset_code: request.from.asset_code(),
                 asset_scale: request.from.asset_scale(),
             };
-            debug!("Responding to query for ildcp info by account: {:?}", from);
+            println!("[MY_LOG DEBUG] {} {}:{}",module_path!() ,file!(), line!()); debug!("Responding to query for ildcp info by account: {:?}", from);
             let response = builder.build();
             Ok(Fulfill::from(response))
         } else {

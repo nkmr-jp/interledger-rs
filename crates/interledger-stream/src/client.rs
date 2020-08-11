@@ -400,7 +400,7 @@ where
 
                 // Return final receipt
                 let payment = sender.payment.lock().await;
-                debug!(
+                println!("[MY_LOG DEBUG] {} {}:{}",module_path!() ,file!(), line!()); debug!(
                     "Send money future finished. Delivered: {} ({} packets fulfilled, {} packets rejected)",
                     payment.receipt.delivered_amount,
                     payment.fulfilled_packets,
@@ -478,7 +478,7 @@ where
             }
             .build();
 
-            debug!(
+            println!("[MY_LOG DEBUG] {} {}:{}",module_path!() ,file!(), line!()); debug!(
                 "Sending packet {} with amount: {} and encrypted STREAM packet: {:?}",
                 sequence, source_amount, stream_request_packet
             );
@@ -554,7 +554,7 @@ where
                             if let Frame::ConnectionAssetDetails(frame) = frame {
                                 let asset_code = frame.source_asset_code.to_string();
                                 let asset_scale = frame.source_asset_scale;
-                                debug!(
+                                println!("[MY_LOG DEBUG] {} {}:{}",module_path!() ,file!(), line!()); debug!(
                                     "Setting remote asset details ({} with scale {})",
                                     asset_code, asset_scale
                                 );
@@ -584,7 +584,7 @@ where
 
                 payment.apply_fulfill(source_amount, delivered_amount);
 
-                debug!(
+                println!("[MY_LOG DEBUG] {} {}:{}",module_path!() ,file!(), line!()); debug!(
                     "Prepare {} with amount {} was fulfilled ({} left to send)",
                     sequence,
                     source_amount,
@@ -597,7 +597,7 @@ where
             Err(reject) => {
                 payment.apply_reject(source_amount, &reject);
 
-                debug!(
+                println!("[MY_LOG DEBUG] {} {}:{}",module_path!() ,file!(), line!()); debug!(
                     "Prepare {} with amount {} was rejected with code: {} ({} left to send)",
                     sequence,
                     source_amount,
@@ -656,7 +656,7 @@ where
 
         // Send it!
         // Packet will always be rejected since the condition is random
-        debug!("Closing connection");
+        println!("[MY_LOG DEBUG] {} {}:{}",module_path!() ,file!(), line!()); debug!("Closing connection");
         self.next
             .handle_request(IncomingRequest {
                 from: self.from_account.clone(),

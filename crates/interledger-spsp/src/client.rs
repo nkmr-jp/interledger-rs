@@ -53,7 +53,7 @@ where
         error!("Error parsing address");
         Error::InvalidSpspServerResponseError(err.to_string())
     })?;
-    debug!("Sending SPSP payment to address: {}", addr);
+    println!("[MY_LOG DEBUG] {} {}:{}",module_path!() ,file!(), line!()); debug!("Sending SPSP payment to address: {}", addr);
 
     let receipt = send_money(
         service,
@@ -70,7 +70,7 @@ where
     })
     .await?;
 
-    debug!("Sent SPSP payment. StreamDelivery: {:?}", receipt);
+    println!("[MY_LOG DEBUG] {} {}:{}",module_path!() ,file!(), line!()); debug!("Sent SPSP payment. StreamDelivery: {:?}", receipt);
     Ok(receipt)
 }
 

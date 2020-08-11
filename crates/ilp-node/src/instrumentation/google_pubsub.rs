@@ -82,7 +82,7 @@ pub fn create_google_pubsub_wrapper<A: Account + 'static>(
             "https://pubsub.googleapis.com/v1/projects/{}/topics/{}:publish",
             config.project_id, config.topic
         ));
-        info!("Fulfilled packets will be submitted to Google Cloud Pubsub (project ID: {}, topic: {})", config.project_id, config.topic);
+        println!("[MY_LOG INFO] {} {}:{}",module_path!() ,file!(), line!()); info!("Fulfilled packets will be submitted to Google Cloud Pubsub (project ID: {}, topic: {})", config.project_id, config.topic);
         Some((client, api_endpoint, token_fetcher))
     } else {
         None

@@ -128,7 +128,7 @@ impl SettlementClient {
             .push(ACCOUNTS_ENDPOINT)
             .push(&id.to_string())
             .push("settlements");
-        debug!(
+        println!("[MY_LOG DEBUG] {} {}:{}",module_path!() ,file!(), line!()); debug!(
             "Sending settlement of amount {} to settlement engine: {}",
             amount, settlement_engine_url
         );

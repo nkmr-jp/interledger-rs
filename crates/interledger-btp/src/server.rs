@@ -87,7 +87,7 @@ where
     // to tungstenite::Message. This probably can be implemented with SinkExt::with
     // but couldn't figure out how.
     service.add_connection(account.clone(), WsWrap { connection });
-    debug!(
+    println!("[MY_LOG DEBUG] {} {}:{}",module_path!() ,file!(), line!()); debug!(
         "Added connection for account {}: (id: {})",
         account.username(),
         account.id()
@@ -111,7 +111,7 @@ where
     A: BtpAccount + 'static,
 {
     let (auth, mut connection) = get_auth(Box::pin(connection)).await?;
-    debug!("Got BTP connection for username: {}", username);
+    println!("[MY_LOG DEBUG] {} {}:{}",module_path!() ,file!(), line!()); debug!("Got BTP connection for username: {}", username);
     let account = store
         .get_account_from_btp_auth(&username, &auth.token.expose_secret())
         .map_err(move |_| warn!("BTP connection does not correspond to an account"))

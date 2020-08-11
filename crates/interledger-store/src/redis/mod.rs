@@ -185,7 +185,7 @@ impl RedisStoreBuilder {
 
         let client = Client::open(redis_info.clone())
             .map_err(|err| error!("Error creating subscription Redis client: {:?}", err))?;
-        debug!("Connected subscription client to redis: {:?}", client);
+        println!("[MY_LOG DEBUG] {} {}:{}",module_path!() ,file!(), line!()); debug!("Connected subscription client to redis: {:?}", client);
         let mut connection = RedisReconnect::connect(redis_info.clone())
             .map_err(|_| ())
             .await?;
@@ -246,7 +246,7 @@ impl RedisStoreBuilder {
                     .map_err(|err| error!("{}", err))
                     .await;
                 } else {
-                    debug!("Not polling routes anymore because connection was closed");
+                    println!("[MY_LOG DEBUG] {} {}:{}",module_path!() ,file!(), line!()); debug!("Not polling routes anymore because connection was closed");
                     break;
                 }
             }
@@ -301,7 +301,10 @@ impl RedisStoreBuilder {
                 });
             match sub_status {
                 Err(e) => warn!("Could not issue psubscribe to Redis: {}", e),
-                Ok(_) => debug!("Successfully subscribed to Redis pubsub"),
+                Ok(_) => {
+                    println!("[MY_LOG DEBUG] {} {}:{}",module_path!() ,file!(), line!());
+                    debug!("Successfully subscribed to Redis pubsub");
+                }
             }
         });
 
@@ -423,7 +426,7 @@ impl RedisStore {
         pipe.query_async(&mut connection).await?;
 
         update_routes(connection, routing_table).await?;
-        debug!(
+        println!("[MY_LOG DEBUG] {} {}:{}",module_path!() ,file!(), line!()); debug!(
             "Inserted account {} (ILP address: {})",
             account.id, account.ilp_address
         );
@@ -492,7 +495,7 @@ impl RedisStore {
 
         pipe.query_async(&mut connection).await?;
         update_routes(connection, routing_table).await?;
-        debug!(
+        println!("[MY_LOG DEBUG] {} {}:{}",module_path!() ,file!(), line!()); debug!(
             "Inserted account {} (id: {}, ILP address: {})",
             account.username, account.id, account.ilp_address
         );
@@ -622,7 +625,7 @@ impl RedisStore {
         let mut connection = self.connection.clone();
         pipe.query_async(&mut connection).await?;
         update_routes(connection, self.routes.clone()).await?;
-        debug!("Deleted account {}", account.id);
+        println!("[MY_LOG DEBUG] {} {}:{}",module_path!() ,file!(), line!()); debug!("Deleted account {}", account.id);
         Ok(encrypted)
     }
 }
@@ -675,7 +678,7 @@ impl AccountStore for RedisStore {
         match id {
             Some(rid) => Ok(rid.0),
             None => {
-                debug!("Username not found: {}", username);
+                println!("[MY_LOG DEBUG] {} {}:{}",module_path!() ,file!(), line!()); debug!("Username not found: {}", username);
                 Err(AccountStoreError::AccountNotFound(username.to_string()))
             }
         }
@@ -710,7 +713,7 @@ impl StreamNotificationsStore for RedisStore {
                 })
                 .await?;
 
-            debug!(
+            println!("[MY_LOG DEBUG] {} {}:{}",module_path!() ,file!(), line!()); debug!(
                 "Publishing payment notification {} for account {}",
                 message, account_id
             );
@@ -871,14 +874,14 @@ impl BtpStore for RedisStore {
                 if t.as_ref() == token.as_bytes() {
                     Ok(account)
                 } else {
-                    debug!(
+                    println!("[MY_LOG DEBUG] {} {}:{}",module_path!() ,file!(), line!()); debug!(
                         "Found account {} but BTP auth token was wrong",
                         account.username
                     );
                     Err(BtpStoreError::Unauthorized(username.to_string()))
                 }
             } else {
-                debug!(
+                println!("[MY_LOG DEBUG] {} {}:{}",module_path!() ,file!(), line!()); debug!(
                     "Account {} does not have an incoming btp token configured",
                     account.username
                 );
@@ -957,7 +960,7 @@ impl NodeStore for RedisStore {
         let id = Uuid::new_v4();
         let account = Account::try_from(id, account, self.get_ilp_address())
             .map_err(NodeStoreError::InvalidAccount)?;
-        debug!(
+        println!("[MY_LOG DEBUG] {} {}:{}",module_path!() ,file!(), line!()); debug!(
             "Generated account id for {}: {}",
             account.username, account.id
         );
@@ -982,7 +985,7 @@ impl NodeStore for RedisStore {
         let account = Account::try_from(id, account, self.get_ilp_address())
             .map_err(NodeStoreError::InvalidAccount)?;
 
-        debug!(
+        println!("[MY_LOG DEBUG] {} {}:{}",module_path!() ,file!(), line!()); debug!(
             "Generated account id for {}: {}",
             account.username, account.id
         );
@@ -1142,7 +1145,7 @@ impl NodeStore for RedisStore {
         connection
             .set(DEFAULT_ROUTE_KEY, RedisAccountId(account_id))
             .await?;
-        debug!("Set default route to account id: {}", account_id);
+        println!("[MY_LOG DEBUG] {} {}:{}",module_path!() ,file!(), line!()); debug!("Set default route to account id: {}", account_id);
         update_routes(connection, routing_table).await?;
         Ok(())
     }
@@ -1156,7 +1159,7 @@ impl NodeStore for RedisStore {
             .into_iter()
             .map(|(asset_code, url)| (asset_code, url.to_string()))
             .collect();
-        debug!("Setting settlement engines to {:?}", asset_to_url_map);
+        println!("[MY_LOG DEBUG] {} {}:{}",module_path!() ,file!(), line!()); debug!("Setting settlement engines to {:?}", asset_to_url_map);
         connection
             .hset_multiple(SETTLEMENT_ENGINES_KEY, &asset_to_url_map)
             .await?;
@@ -1194,7 +1197,7 @@ impl AddressStore for RedisStore {
     // Updates the ILP address of the store & iterates over all children and
     // updates their ILP Address to match the new address.
     async fn set_ilp_address(&self, ilp_address: Address) -> Result<(), AddressStoreError> {
-        debug!("Setting ILP address to: {}", ilp_address);
+        println!("[MY_LOG DEBUG] {} {}:{}",module_path!() ,file!(), line!()); debug!("Setting ILP address to: {}", ilp_address);
         let routing_table = self.routes.clone();
         let mut connection = self.connection.clone();
 

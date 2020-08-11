@@ -55,7 +55,7 @@ impl EngineRedisStoreBuilder {
             .get_multiplexed_tokio_connection()
             .map_err(|err| error!("Error connecting to Redis: {:?}", err))
             .await?;
-        debug!("Connected to redis: {:?}", client);
+        println!("[MY_LOG DEBUG] {} {}:{}",module_path!() ,file!(), line!()); debug!("Connected to redis: {:?}", client);
 
         Ok(EngineRedisStore { connection })
     }

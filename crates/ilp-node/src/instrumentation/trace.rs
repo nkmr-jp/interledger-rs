@@ -126,7 +126,7 @@ fn trace_response(result: Result<Fulfill, Reject>) -> Result<Fulfill, Reject> {
         Ok(ref fulfill) => {
             debug_span!(target: "interledger-node", "", fulfillment = %hex::encode(fulfill.fulfillment())).in_scope(
                 || {
-                    info!(target: "interledger-node", result = "fulfill");
+                    println!("[MY_LOG INFO] {} {}:{}",module_path!() ,file!(), line!()); info!(target: "interledger-node", result = "fulfill");
                 },
             )
         }
@@ -144,7 +144,7 @@ fn trace_response(result: Result<Fulfill, Reject>) -> Result<Fulfill, Reject> {
                 reject.triggered_by = "")
         }
         .in_scope(|| {
-            info!(target: "interledger-node", result = "reject");
+            println!("[MY_LOG INFO] {} {}:{}",module_path!() ,file!(), line!()); info!(target: "interledger-node", result = "reject");
         }),
     };
 

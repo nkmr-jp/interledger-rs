@@ -73,7 +73,7 @@ pub async fn serve_prometheus(node: InterledgerNode) -> Result<(), ()> {
                     .body(prometheus_response)
             });
 
-            info!(target: "interledger-node",
+            println!("[MY_LOG INFO] {} {}:{}",module_path!() ,file!(), line!()); info!(target: "interledger-node",
                 "Prometheus metrics server listening on: {}",
                 prometheus.bind_address
             );

@@ -120,7 +120,7 @@ where
         self.store
             .update_balances_for_prepare(from.id(), incoming_amount)
             .map_err(move |_| {
-                debug!("Rejecting packet because it would exceed a balance limit");
+                println!("[MY_LOG DEBUG] {} {}:{}",module_path!() ,file!(), line!()); debug!("Rejecting packet because it would exceed a balance limit");
                 RejectBuilder {
                     code: ErrorCode::T04_INSUFFICIENT_LIQUIDITY,
                     message: &[],
@@ -147,7 +147,7 @@ where
                             .update_balances_for_fulfill(to.id(), outgoing_amount)
                             .map_err(|err| error!("Error applying balance changes for fulfill from account: {} to account: {}. Incoming amount was: {}, outgoing amount was: {}. Error: {}", from_id, to_id, incoming_amount, outgoing_amount, err))
                             .await?;
-                        debug!(
+                        println!("[MY_LOG DEBUG] {} {}:{}",module_path!() ,file!(), line!()); debug!(
                             "Account balance after fulfill: {}. Amount that needs to be settled: {}",
                             balance, amount_to_settle
                         );

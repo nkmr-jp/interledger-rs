@@ -45,7 +45,7 @@ where
         if request.prepare.amount() <= max_packet_amount {
             self.next.handle_request(request).await
         } else {
-            debug!(
+            println!("[MY_LOG DEBUG] {} {}:{}",module_path!() ,file!(), line!()); debug!(
                 "Prepare amount:{} exceeds max_packet_amount: {}",
                 request.prepare.amount(),
                 max_packet_amount
