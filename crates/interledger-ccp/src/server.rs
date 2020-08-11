@@ -267,7 +267,7 @@ where
             // tells us that they are online
             // TODO what happens if they can send to us but we can't send to them?
             {
-                trace!("Checking whether account was previously listed as unavailable");
+                println!("[MY_LOG TRACE] {} {}:{}",module_path!() ,file!(), line!()); trace!("Checking whether account was previously listed as unavailable");
                 let mut unavailable_accounts = self.unavailable_accounts.lock();
                 if unavailable_accounts.remove(&request.from.id()).is_some() {
                     debug!("Account {} (id: {}) is no longer unavailable, will resume broadcasting routes to it",
@@ -328,10 +328,10 @@ where
                     warn!("Got route broadcast for the global prefix: {:?}", route);
                     false
                 } else if route.prefix.starts_with(&ilp_address as &str) {
-                    trace!("Ignoring route broadcast for a prefix that starts with our own address: {:?}", route);
+                    println!("[MY_LOG TRACE] {} {}:{}",module_path!() ,file!(), line!()); trace!("Ignoring route broadcast for a prefix that starts with our own address: {:?}", route);
                     false
                 } else if route.path.iter().any(|p| p == &ilp_address as &str) {
-                    trace!(
+                    println!("[MY_LOG TRACE] {} {}:{}",module_path!() ,file!(), line!()); trace!(
                         "Ignoring route broadcast for a route that includes us: {:?}",
                         route
                     );
@@ -401,7 +401,7 @@ where
         match result {
             Ok(prefixes_updated) => {
                 if prefixes_updated.is_empty() {
-                    trace!("Route update request did not contain any prefixes we need to update our routes for");
+                    println!("[MY_LOG TRACE] {} {}:{}",module_path!() ,file!(), line!()); trace!("Route update request did not contain any prefixes we need to update our routes for");
                     return Ok(CCP_RESPONSE.clone());
                 }
 
@@ -665,7 +665,7 @@ where
         let unavailable_accounts = self.unavailable_accounts.clone();
         // Check which accounts we should skip this iteration
         let accounts_to_skip: Vec<Uuid> = {
-            trace!("Checking accounts to skip");
+            println!("[MY_LOG TRACE] {} {}:{}",module_path!() ,file!(), line!()); trace!("Checking accounts to skip");
             let mut unavailable_accounts = self.unavailable_accounts.lock();
             let mut skip = Vec::new();
             for (id, mut backoff) in unavailable_accounts.iter_mut() {
@@ -677,7 +677,7 @@ where
             skip
         };
 
-        trace!("Skipping accounts: {:?}", accounts_to_skip);
+        println!("[MY_LOG TRACE] {} {}:{}",module_path!() ,file!(), line!()); trace!("Skipping accounts: {:?}", accounts_to_skip);
         let mut accounts = self
             .store
             .get_accounts_to_send_routes_to(accounts_to_skip)
@@ -696,7 +696,7 @@ where
 
         let broadcasting = !accounts.is_empty();
         if broadcasting {
-            trace!(
+            println!("[MY_LOG TRACE] {} {}:{}",module_path!() ,file!(), line!()); trace!(
                 "Sending route update for epochs {} - {} to accounts: {:?} {}",
                 from_epoch_index,
                 to_epoch_index,
@@ -735,7 +735,7 @@ where
             }
 
             // Handle the results of the route broadcast attempts
-            trace!("Updating unavailable accounts");
+            println!("[MY_LOG TRACE] {} {}:{}",module_path!() ,file!(), line!()); trace!("Updating unavailable accounts");
             let mut unavailable_accounts = unavailable_accounts.lock();
             for (account, result) in results.into_iter() {
                 match (account.routing_relation(), result) {
@@ -755,7 +755,7 @@ where
                                 },
                             );
                         }
-                        trace!("Error sending route update to {:?} account {} (id: {}), increased backoff to {}: {:?}",
+                        println!("[MY_LOG TRACE] {} {}:{}",module_path!() ,file!(), line!()); trace!("Error sending route update to {:?} account {} (id: {}), increased backoff to {}: {:?}",
                             account.routing_relation(), account.username(), account.id(), unavailable_accounts[&account.id()].max, err);
                     }
                     (_, Err(err)) => {
@@ -776,7 +776,7 @@ where
             }
             Ok(())
         } else {
-            trace!("No accounts to broadcast routes to");
+            println!("[MY_LOG TRACE] {} {}:{}",module_path!() ,file!(), line!()); trace!("No accounts to broadcast routes to");
             Ok(())
         }
     }

@@ -65,7 +65,7 @@ where
         let latest_allowable_expiry =
             Utc::now() + Duration::milliseconds(i64::from(self.max_expiry_duration));
         let new_expiry = if new_expiry > latest_allowable_expiry {
-            trace!(
+            println!("[MY_LOG TRACE] {} {}:{}",module_path!() ,file!(), line!()); trace!(
                 "Shortening packet expiry duration to {}ms in the future",
                 self.max_expiry_duration
             );

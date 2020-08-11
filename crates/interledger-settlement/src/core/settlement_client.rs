@@ -98,7 +98,7 @@ impl SettlementClient {
             .path_segments_mut()
             .expect("Invalid settlement engine URL")
             .push(ACCOUNTS_ENDPOINT);
-        trace!(
+        println!("[MY_LOG TRACE] {} {}:{}",module_path!() ,file!(), line!()); trace!(
             "Sending account {} creation request to settlement engine: {:?}",
             id,
             se_url.clone()

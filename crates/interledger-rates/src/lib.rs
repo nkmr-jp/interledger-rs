@@ -135,8 +135,7 @@ where
                 }
             }).await?;
 
-        trace!("Fetched exchange rates: {:?}", rates);
-        println!("[MY_LOG] Fetched exchange rates: {}:{}",file!(), line!());
+        println!("[MY_LOG TRACE] {} {}:{}",module_path!() ,file!(), line!()); trace!("Fetched exchange rates: {:?}", rates);
         let num_rates = rates.len();
         rates.insert("USD".to_string(), 1.0);
         if store_clone.set_exchange_rates(rates).is_ok() {

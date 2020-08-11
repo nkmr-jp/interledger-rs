@@ -11,7 +11,7 @@ use tracing::{debug, error, trace};
 /// Get an ILP Address and shared secret by the receiver of this payment for this connection
 pub async fn query(server: &str) -> Result<SpspResponse, Error> {
     let server = payment_pointer_to_url(server);
-    trace!("Querying receiver: {}", server);
+    println!("[MY_LOG TRACE] {} {}:{}",module_path!() ,file!(), line!()); trace!("Querying receiver: {}", server);
 
     let client = Client::new();
     let res = client
@@ -89,7 +89,7 @@ fn payment_pointer_to_url(payment_pointer: &str) -> String {
     } else if num_slashes == 1 && url.ends_with('/') {
         url.push_str(".well-known/pay");
     }
-    trace!(
+    println!("[MY_LOG TRACE] {} {}:{}",module_path!() ,file!(), line!()); trace!(
         "Converted payment pointer: {} to URL: {}",
         payment_pointer,
         url

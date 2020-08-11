@@ -103,7 +103,7 @@ where
         })
         .await?;
 
-    trace!(
+    println!("[MY_LOG TRACE] {} {}:{}",module_path!() ,file!(), line!()); trace!(
         "Connected to account {} (UID: {}) (URI: {}), sending auth packet",
         account.username(),
         account_id,

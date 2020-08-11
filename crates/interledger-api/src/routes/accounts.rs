@@ -597,7 +597,7 @@ where
     // Try to connect to the account's BTP socket if they have
     // one configured
     if account.get_ilp_over_btp_url().is_some() {
-        trace!("Newly inserted account has a BTP URL configured, will try to connect");
+        println!("[MY_LOG TRACE] {} {}:{}",module_path!() ,file!(), line!()); trace!("Newly inserted account has a BTP URL configured, will try to connect");
         connect_to_service_account(account.clone(), true, btp).await?
     }
 
@@ -622,7 +622,7 @@ where
     if let Some(se_url) = settlement_engine_url {
         let id = account.id();
         let http_client = SettlementClient::default();
-        trace!(
+        println!("[MY_LOG TRACE] {} {}:{}",module_path!() ,file!(), line!()); trace!(
             "Sending account {} creation request to settlement engine: {:?}",
             id,
             se_url.clone()
@@ -636,7 +636,7 @@ where
             .await?;
 
         if response.status().is_success() {
-            trace!("Account {} created on the SE", id);
+            println!("[MY_LOG TRACE] {} {}:{}",module_path!() ,file!(), line!()); trace!("Account {} created on the SE", id);
 
             // We will pre-fund our account with 0, which will return
             // the current settle_to value

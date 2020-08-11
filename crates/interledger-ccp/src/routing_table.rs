@@ -144,7 +144,7 @@ where
 
         // It is OK to receive epochs with the same index as our current epoch
         if request.to_epoch_index < self.epoch {
-            trace!(
+            println!("[MY_LOG TRACE] {} {}:{}",module_path!() ,file!(), line!()); trace!(
                 "Ignoring routing update from old epoch. Received epoch: {}. Our epoch: {}",
                 request.to_epoch_index,
                 self.epoch
@@ -157,7 +157,7 @@ where
         self.epoch = request.to_epoch_index;
 
         if request.new_routes.is_empty() && request.withdrawn_routes.is_empty() {
-            trace!(
+            println!("[MY_LOG TRACE] {} {}:{}",module_path!() ,file!(), line!()); trace!(
                 "Got heartbeat route update for table ID: {}, epoch: {}",
                 hex::encode(&self.id[..]),
                 self.epoch
@@ -179,7 +179,7 @@ where
             }
         }
 
-        trace!(
+        println!("[MY_LOG TRACE] {} {}:{}",module_path!() ,file!(), line!()); trace!(
             "Updated routing table {} to epoch: {}",
             hex::encode(&self.id[..]),
             self.epoch

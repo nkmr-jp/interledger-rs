@@ -137,7 +137,7 @@ where
                         .build());
                     }
                     request.prepare.set_amount(outgoing_amount as u64);
-                    trace!("Converted incoming amount of: {} {} (scale {}) from account {} to outgoing amount of: {} {} (scale {}) for account {}",
+                    println!("[MY_LOG TRACE] {} {}:{}",module_path!() ,file!(), line!()); trace!("Converted incoming amount of: {} {} (scale {}) from account {} to outgoing amount of: {} {} (scale {}) for account {}",
                         request.original_amount, request.from.asset_code(), request.from.asset_scale(), request.from.id(),
                         outgoing_amount, request.to.asset_code(), request.to.asset_scale(), request.to.id());
                 }
