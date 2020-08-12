@@ -211,7 +211,7 @@ where
                             .map_err(|err| Rejection::from(ApiError::internal_server_error().detail(err.to_string())))
                             .await?;
                         if response.status().is_success() {
-                            println!("[MY_LOG TRACE] {} {}:{}",module_path!() ,file!(), line!()); trace!("Account {} created on the SE", account.id());
+                            println!("[MY_LOG TRACE] {}:{}", file!(), line!()); trace!("Account {} created on the SE", account.id());
                         } else {
                             error!("Error creating account. Settlement engine responded with HTTP code: {}", response.status());
                         }

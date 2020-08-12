@@ -36,7 +36,7 @@ impl SpspResponder {
         let (destination_account, shared_secret) = self
             .connection_generator
             .generate_address_and_secret(&self.ilp_address);
-        println!("[MY_LOG DEBUG] {} {}:{}",module_path!() ,file!(), line!()); debug!(
+        println!("[MY_LOG DEBUG] {}:{}", file!(), line!()); debug!(
             "Generated address and secret for: {:?}",
             destination_account
         );

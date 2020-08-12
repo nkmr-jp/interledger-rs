@@ -55,7 +55,7 @@ impl EngineRedisStoreBuilder {
             .get_multiplexed_tokio_connection()
             .map_err(|err| error!("Error connecting to Redis: {:?}", err))
             .await?;
-        println!("[MY_LOG DEBUG] {} {}:{}",module_path!() ,file!(), line!()); debug!("Connected to redis: {:?}", client);
+        println!("[MY_LOG DEBUG] {}:{}", file!(), line!()); debug!("Connected to redis: {:?}", client);
 
         Ok(EngineRedisStore { connection })
     }
@@ -84,7 +84,7 @@ impl IdempotentStore for EngineRedisStore {
             ret.get("data"),
             ret.get("input_hash"),
         ) {
-            println!("[MY_LOG TRACE] {} {}:{}",module_path!() ,file!(), line!()); trace!("Loaded idempotency key {:?} - {:?}", idempotency_key, ret);
+            println!("[MY_LOG TRACE] {}:{}", file!(), line!()); trace!("Loaded idempotency key {:?} - {:?}", idempotency_key, ret);
             let mut input_hash: [u8; 32] = Default::default();
             input_hash.copy_from_slice(input_hash_slice.as_ref());
             Ok(Some(IdempotentData::new(
@@ -119,7 +119,7 @@ impl IdempotentStore for EngineRedisStore {
             .expire(&idempotency_key, 86400)
             .ignore();
         pipe.query_async(&mut connection).await?;
-        println!("[MY_LOG TRACE] {} {}:{}",module_path!() ,file!(), line!()); trace!(
+        println!("[MY_LOG TRACE] {}:{}", file!(), line!()); trace!(
             "Cached {:?}: {:?}, {:?}",
             idempotency_key,
             status_code,
@@ -237,7 +237,7 @@ impl LeftoversStore for EngineRedisStore {
         account_id: Self::AccountId,
         uncredited_settlement_amount: (Self::AssetType, u8),
     ) -> Result<(), LeftoversStoreError> {
-        println!("[MY_LOG TRACE] {} {}:{}",module_path!() ,file!(), line!()); trace!(
+        println!("[MY_LOG TRACE] {}:{}", file!(), line!()); trace!(
             "Saving uncredited_settlement_amount {:?} {:?}",
             account_id,
             uncredited_settlement_amount
@@ -266,7 +266,7 @@ impl LeftoversStore for EngineRedisStore {
         local_scale: u8,
     ) -> Result<Self::AssetType, LeftoversStoreError> {
         let connection = self.connection.clone();
-        println!("[MY_LOG TRACE] {} {}:{}",module_path!() ,file!(), line!()); trace!("Loading uncredited_settlement_amount {:?}", account_id);
+        println!("[MY_LOG TRACE] {}:{}", file!(), line!()); trace!("Loading uncredited_settlement_amount {:?}", account_id);
         let amount = self
             .get_uncredited_settlement_amount(account_id.clone())
             .await?;
@@ -296,7 +296,7 @@ impl LeftoversStore for EngineRedisStore {
         &self,
         account_id: Self::AccountId,
     ) -> Result<(), LeftoversStoreError> {
-        println!("[MY_LOG TRACE] {} {}:{}",module_path!() ,file!(), line!()); trace!("Clearing uncredited_settlement_amount {:?}", account_id,);
+        println!("[MY_LOG TRACE] {}:{}", file!(), line!()); trace!("Clearing uncredited_settlement_amount {:?}", account_id,);
         let mut connection = self.connection.clone();
         connection.del(uncredited_amount_key(&account_id)).await?;
 

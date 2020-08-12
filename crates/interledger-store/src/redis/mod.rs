@@ -185,7 +185,7 @@ impl RedisStoreBuilder {
 
         let client = Client::open(redis_info.clone())
             .map_err(|err| error!("Error creating subscription Redis client: {:?}", err))?;
-        println!("[MY_LOG DEBUG] {} {}:{}",module_path!() ,file!(), line!()); debug!("Connected subscription client to redis: {:?}", client);
+        println!("[MY_LOG DEBUG] {}:{}", file!(), line!()); debug!("Connected subscription client to redis: {:?}", client);
         let mut connection = RedisReconnect::connect(redis_info.clone())
             .map_err(|_| ())
             .await?;
@@ -246,7 +246,7 @@ impl RedisStoreBuilder {
                     .map_err(|err| error!("{}", err))
                     .await;
                 } else {
-                    println!("[MY_LOG DEBUG] {} {}:{}",module_path!() ,file!(), line!()); debug!("Not polling routes anymore because connection was closed");
+                    println!("[MY_LOG DEBUG] {}:{}", file!(), line!()); debug!("Not polling routes anymore because connection was closed");
                     break;
                 }
             }
@@ -274,7 +274,7 @@ impl RedisStoreBuilder {
                                     return ControlFlow::Continue;
                                 }
                             };
-                            println!("[MY_LOG TRACE] {} {}:{}",module_path!() ,file!(), line!()); trace!("Subscribed message received for account {}: {:?}", account_id, message);
+                            println!("[MY_LOG TRACE] {}:{}", file!(), line!()); trace!("Subscribed message received for account {}: {:?}", account_id, message);
                             if payment_publisher.receiver_count() > 0 {
                                 if let Err(err) = payment_publisher.send(message.clone()) {
                                     error!("Failed to send a node-wide payment notification: {:?}", err);
@@ -287,7 +287,7 @@ impl RedisStoreBuilder {
                                     }
                                 }
                                 None => {
-                                    println!("[MY_LOG TRACE] {} {}:{}",module_path!() ,file!(), line!());
+                                    println!("[MY_LOG TRACE] {}:{}", file!(), line!());
                                     trace!("Ignoring message for account {} because there were no open subscriptions", account_id);
                                 },
                             }
@@ -302,7 +302,7 @@ impl RedisStoreBuilder {
             match sub_status {
                 Err(e) => warn!("Could not issue psubscribe to Redis: {}", e),
                 Ok(_) => {
-                    println!("[MY_LOG DEBUG] {} {}:{}",module_path!() ,file!(), line!());
+                    println!("[MY_LOG DEBUG] {}:{}", file!(), line!());
                     debug!("Successfully subscribed to Redis pubsub");
                 }
             }
@@ -426,7 +426,7 @@ impl RedisStore {
         pipe.query_async(&mut connection).await?;
 
         update_routes(connection, routing_table).await?;
-        println!("[MY_LOG DEBUG] {} {}:{}",module_path!() ,file!(), line!()); debug!(
+        println!("[MY_LOG DEBUG] {}:{}", file!(), line!()); debug!(
             "Inserted account {} (ILP address: {})",
             account.id, account.ilp_address
         );
@@ -495,7 +495,7 @@ impl RedisStore {
 
         pipe.query_async(&mut connection).await?;
         update_routes(connection, routing_table).await?;
-        println!("[MY_LOG DEBUG] {} {}:{}",module_path!() ,file!(), line!()); debug!(
+        println!("[MY_LOG DEBUG] {}:{}", file!(), line!()); debug!(
             "Inserted account {} (id: {}, ILP address: {})",
             account.username, account.id, account.ilp_address
         );
@@ -625,7 +625,7 @@ impl RedisStore {
         let mut connection = self.connection.clone();
         pipe.query_async(&mut connection).await?;
         update_routes(connection, self.routes.clone()).await?;
-        println!("[MY_LOG DEBUG] {} {}:{}",module_path!() ,file!(), line!()); debug!("Deleted account {}", account.id);
+        println!("[MY_LOG DEBUG] {}:{}", file!(), line!()); debug!("Deleted account {}", account.id);
         Ok(encrypted)
     }
 }
@@ -678,7 +678,7 @@ impl AccountStore for RedisStore {
         match id {
             Some(rid) => Ok(rid.0),
             None => {
-                println!("[MY_LOG DEBUG] {} {}:{}",module_path!() ,file!(), line!()); debug!("Username not found: {}", username);
+                println!("[MY_LOG DEBUG] {}:{}", file!(), line!()); debug!("Username not found: {}", username);
                 Err(AccountStoreError::AccountNotFound(username.to_string()))
             }
         }
@@ -693,7 +693,7 @@ impl StreamNotificationsStore for RedisStore {
         id: Uuid,
         sender: UnboundedSender<PaymentNotification>,
     ) {
-        println!("[MY_LOG TRACE] {} {}:{}",module_path!() ,file!(), line!()); trace!("Added payment notification listener for {}", id);
+        println!("[MY_LOG TRACE] {}:{}", file!(), line!()); trace!("Added payment notification listener for {}", id);
         self.subscriptions.write().insert(id, sender);
     }
 
@@ -713,7 +713,7 @@ impl StreamNotificationsStore for RedisStore {
                 })
                 .await?;
 
-            println!("[MY_LOG DEBUG] {} {}:{}",module_path!() ,file!(), line!()); debug!(
+            println!("[MY_LOG DEBUG] {}:{}", file!(), line!()); debug!(
                 "Publishing payment notification {} for account {}",
                 message, account_id
             );
@@ -767,7 +767,7 @@ impl BalanceStore for RedisStore {
             .invoke_async(&mut self.connection.clone())
             .await?;
 
-        println!("[MY_LOG TRACE] {} {}:{}",module_path!() ,file!(), line!()); trace!(
+        println!("[MY_LOG TRACE] {}:{}", file!(), line!()); trace!(
             "Processed prepare with incoming amount: {}. Account {} has balance (including prepaid amount): {} ",
             incoming_amount, from_account_id, balance
         );
@@ -785,7 +785,7 @@ impl BalanceStore for RedisStore {
             .invoke_async(&mut self.connection.clone())
             .await?;
 
-        println!("[MY_LOG TRACE] {} {}:{}",module_path!() ,file!(), line!()); trace!(
+        println!("[MY_LOG TRACE] {}:{}", file!(), line!()); trace!(
             "Processed fulfill for account {} for outgoing amount {}. Fulfill call result: {} {}",
             to_account_id,
             outgoing_amount,
@@ -810,7 +810,7 @@ impl BalanceStore for RedisStore {
             .invoke_async(&mut self.connection.clone())
             .await?;
 
-        println!("[MY_LOG TRACE] {} {}:{}",module_path!() ,file!(), line!()); trace!(
+        println!("[MY_LOG TRACE] {}:{}", file!(), line!()); trace!(
             "Processed reject for incoming amount: {}. Account {} has balance (including prepaid amount): {}",
             incoming_amount, from_account_id, balance
         );
@@ -874,14 +874,14 @@ impl BtpStore for RedisStore {
                 if t.as_ref() == token.as_bytes() {
                     Ok(account)
                 } else {
-                    println!("[MY_LOG DEBUG] {} {}:{}",module_path!() ,file!(), line!()); debug!(
+                    println!("[MY_LOG DEBUG] {}:{}", file!(), line!()); debug!(
                         "Found account {} but BTP auth token was wrong",
                         account.username
                     );
                     Err(BtpStoreError::Unauthorized(username.to_string()))
                 }
             } else {
-                println!("[MY_LOG DEBUG] {} {}:{}",module_path!() ,file!(), line!()); debug!(
+                println!("[MY_LOG DEBUG] {}:{}", file!(), line!()); debug!(
                     "Account {} does not have an incoming btp token configured",
                     account.username
                 );
@@ -960,7 +960,7 @@ impl NodeStore for RedisStore {
         let id = Uuid::new_v4();
         let account = Account::try_from(id, account, self.get_ilp_address())
             .map_err(NodeStoreError::InvalidAccount)?;
-        println!("[MY_LOG DEBUG] {} {}:{}",module_path!() ,file!(), line!()); debug!(
+        println!("[MY_LOG DEBUG] {}:{}", file!(), line!()); debug!(
             "Generated account id for {}: {}",
             account.username, account.id
         );
@@ -985,7 +985,7 @@ impl NodeStore for RedisStore {
         let account = Account::try_from(id, account, self.get_ilp_address())
             .map_err(NodeStoreError::InvalidAccount)?;
 
-        println!("[MY_LOG DEBUG] {} {}:{}",module_path!() ,file!(), line!()); debug!(
+        println!("[MY_LOG DEBUG] {}:{}", file!(), line!()); debug!(
             "Generated account id for {}: {}",
             account.username, account.id
         );
@@ -1145,7 +1145,7 @@ impl NodeStore for RedisStore {
         connection
             .set(DEFAULT_ROUTE_KEY, RedisAccountId(account_id))
             .await?;
-        println!("[MY_LOG DEBUG] {} {}:{}",module_path!() ,file!(), line!()); debug!("Set default route to account id: {}", account_id);
+        println!("[MY_LOG DEBUG] {}:{}", file!(), line!()); debug!("Set default route to account id: {}", account_id);
         update_routes(connection, routing_table).await?;
         Ok(())
     }
@@ -1159,7 +1159,7 @@ impl NodeStore for RedisStore {
             .into_iter()
             .map(|(asset_code, url)| (asset_code, url.to_string()))
             .collect();
-        println!("[MY_LOG DEBUG] {} {}:{}",module_path!() ,file!(), line!()); debug!("Setting settlement engines to {:?}", asset_to_url_map);
+        println!("[MY_LOG DEBUG] {}:{}", file!(), line!()); debug!("Setting settlement engines to {:?}", asset_to_url_map);
         connection
             .hset_multiple(SETTLEMENT_ENGINES_KEY, &asset_to_url_map)
             .await?;
@@ -1197,7 +1197,7 @@ impl AddressStore for RedisStore {
     // Updates the ILP address of the store & iterates over all children and
     // updates their ILP Address to match the new address.
     async fn set_ilp_address(&self, ilp_address: Address) -> Result<(), AddressStoreError> {
-        println!("[MY_LOG DEBUG] {} {}:{}",module_path!() ,file!(), line!()); debug!("Setting ILP address to: {}", ilp_address);
+        println!("[MY_LOG DEBUG] {}:{}", file!(), line!()); debug!("Setting ILP address to: {}", ilp_address);
         let routing_table = self.routes.clone();
         let mut connection = self.connection.clone();
 
@@ -1380,7 +1380,7 @@ impl CcpRoutingStore for RedisStore {
             .ignore();
 
         pipe.query_async(&mut connection).await?;
-        println!("[MY_LOG TRACE] {} {}:{}",module_path!() ,file!(), line!()); trace!("Saved {} routes to Redis", num_routes);
+        println!("[MY_LOG TRACE] {}:{}", file!(), line!()); trace!("Saved {} routes to Redis", num_routes);
 
         update_routes(connection, self.routes.clone()).await?;
         Ok(())
@@ -1495,7 +1495,7 @@ impl IdempotentStore for RedisStore {
             ret.get("data"),
             ret.get("input_hash"),
         ) {
-            println!("[MY_LOG TRACE] {} {}:{}",module_path!() ,file!(), line!()); trace!("Loaded idempotency key {:?} - {:?}", idempotency_key, ret);
+            println!("[MY_LOG TRACE] {}:{}", file!(), line!()); trace!("Loaded idempotency key {:?} - {:?}", idempotency_key, ret);
             let mut input_hash: [u8; 32] = Default::default();
             input_hash.copy_from_slice(input_hash_slice.as_ref());
             Ok(Some(IdempotentData::new(
@@ -1531,7 +1531,7 @@ impl IdempotentStore for RedisStore {
             .ignore();
         pipe.query_async(&mut connection).await?;
 
-        println!("[MY_LOG TRACE] {} {}:{}",module_path!() ,file!(), line!()); trace!(
+        println!("[MY_LOG TRACE] {}:{}", file!(), line!()); trace!(
             "Cached {:?}: {:?}, {:?}",
             idempotency_key,
             status_code,
@@ -1558,7 +1558,7 @@ impl SettlementStore for RedisStore {
             .arg(idempotency_key)
             .invoke_async(&mut self.connection.clone())
             .await?;
-        println!("[MY_LOG TRACE] {} {}:{}",module_path!() ,file!(), line!()); trace!(
+        println!("[MY_LOG TRACE] {}:{}", file!(), line!()); trace!(
             "Processed incoming settlement from account: {} for amount: {}. Balance is now: {}",
             account_id,
             amount,
@@ -1572,7 +1572,7 @@ impl SettlementStore for RedisStore {
         account_id: Uuid,
         settle_amount: u64,
     ) -> Result<(), SettlementStoreError> {
-        println!("[MY_LOG TRACE] {} {}:{}",module_path!() ,file!(), line!()); trace!(
+        println!("[MY_LOG TRACE] {}:{}", file!(), line!()); trace!(
             "Refunding settlement for account: {} of amount: {}",
             account_id,
             settle_amount
@@ -1583,7 +1583,7 @@ impl SettlementStore for RedisStore {
             .invoke_async(&mut self.connection.clone())
             .await?;
 
-        println!("[MY_LOG TRACE] {} {}:{}",module_path!() ,file!(), line!()); trace!(
+        println!("[MY_LOG TRACE] {}:{}", file!(), line!()); trace!(
             "Refunded settlement for account: {} of amount: {}. Balance is now: {}",
             account_id,
             settle_amount,
@@ -1710,7 +1710,7 @@ impl LeftoversStore for RedisStore {
         account_id: Uuid,
         uncredited_settlement_amount: (Self::AssetType, u8),
     ) -> Result<(), LeftoversStoreError> {
-        println!("[MY_LOG TRACE] {} {}:{}",module_path!() ,file!(), line!()); trace!(
+        println!("[MY_LOG TRACE] {}:{}", file!(), line!()); trace!(
             "Saving uncredited_settlement_amount {:?} {:?}",
             account_id,
             uncredited_settlement_amount
@@ -1738,7 +1738,7 @@ impl LeftoversStore for RedisStore {
         account_id: Uuid,
         local_scale: u8,
     ) -> Result<Self::AssetType, LeftoversStoreError> {
-        println!("[MY_LOG TRACE] {} {}:{}",module_path!() ,file!(), line!()); trace!("Loading uncredited_settlement_amount {:?}", account_id);
+        println!("[MY_LOG TRACE] {}:{}", file!(), line!()); trace!("Loading uncredited_settlement_amount {:?}", account_id);
         let amount = self.get_uncredited_settlement_amount(account_id).await?;
         // scale the amount from the max scale to the local scale, and then
         // save any potential leftovers to the store
@@ -1765,7 +1765,7 @@ impl LeftoversStore for RedisStore {
         &self,
         account_id: Uuid,
     ) -> Result<(), LeftoversStoreError> {
-        println!("[MY_LOG TRACE] {} {}:{}",module_path!() ,file!(), line!()); trace!("Clearing uncredited_settlement_amount {:?}", account_id);
+        println!("[MY_LOG TRACE] {}:{}", file!(), line!()); trace!("Clearing uncredited_settlement_amount {:?}", account_id);
         self.connection
             .clone()
             .del(uncredited_amount_key(account_id))
@@ -1789,7 +1789,7 @@ async fn update_routes(
         .get(DEFAULT_ROUTE_KEY);
     let (routes, static_routes, default_route): (RouteVec, RouteVec, Option<RedisAccountId>) =
         pipe.query_async(&mut connection).await?;
-    println!("[MY_LOG TRACE] {} {}:{}",module_path!() ,file!(), line!()); trace!(
+    println!("[MY_LOG TRACE] {}:{}", file!(), line!()); trace!(
         "Loaded routes from redis. Static routes: {:?}, default route: {:?}, other routes: {:?}",
         static_routes,
         default_route,
@@ -1812,7 +1812,7 @@ async fn update_routes(
     );
     // TODO we may not want to print this because the routing table will be very big
     // if the node has a lot of local accounts
-    println!("[MY_LOG TRACE] {} {}:{}",module_path!() ,file!(), line!()); trace!("Routing table is: {:?}", routes);
+    println!("[MY_LOG TRACE] {}:{}", file!(), line!()); trace!("Routing table is: {:?}", routes);
     *routing_table.write() = Arc::new(routes);
     Ok(())
 }

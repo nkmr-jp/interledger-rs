@@ -84,7 +84,7 @@ where
 
     /// Spawns a future which calls [`self.update_rates()`](./struct.ExchangeRateFetcher.html#method.update_rates) every `interval`
     pub fn spawn_interval(self, interval: Duration) {
-        println!("[MY_LOG DEBUG] {} {}:{}",module_path!() ,file!(), line!()); debug!(
+        println!("[MY_LOG DEBUG] {}:{}", file!(), line!()); debug!(
             "Starting interval to poll exchange rate provider: {:?} for rates",
             self.provider
         );
@@ -135,13 +135,13 @@ where
                 }
             }).await?;
 
-        println!("[MY_LOG TRACE] {} {}:{}",module_path!() ,file!(), line!()); trace!("Fetched exchange rates: {:?}", rates);
+        println!("[MY_LOG TRACE] {}:{}", file!(), line!()); trace!("Fetched exchange rates: {:?}", rates);
         let num_rates = rates.len();
         rates.insert("USD".to_string(), 1.0);
         if store_clone.set_exchange_rates(rates).is_ok() {
             // Reset our invalidation counter
             consecutive_failed_polls_zeroer.store(0, Ordering::Relaxed);
-            println!("[MY_LOG DEBUG] {} {}:{}",module_path!() ,file!(), line!()); debug!("Updated {} exchange rates from {:?}", num_rates, provider);
+            println!("[MY_LOG DEBUG] {}:{}", file!(), line!()); debug!("Updated {} exchange rates from {:?}", num_rates, provider);
             Ok(())
         } else {
             error!("Error setting exchange rates in store");

@@ -75,7 +75,7 @@ async fn handle_message<A: BtpAccount>(
         match parse_ilp_packet(message) {
             // Queues up the prepare packet
             Ok((request_id, Packet::Prepare(prepare))) => {
-                println!("[MY_LOG TRACE] {} {}:{}",module_path!() ,file!(), line!()); trace!(
+                println!("[MY_LOG TRACE] {}:{}", file!(), line!()); trace!(
                     "Got incoming Prepare packet on request ID: {} {:?}",
                     request_id,
                     prepare
@@ -86,7 +86,7 @@ async fn handle_message<A: BtpAccount>(
             }
             // Sends the fulfill/reject to the outgoing service
             Ok((request_id, Packet::Fulfill(fulfill))) => {
-                println!("[MY_LOG TRACE] {} {}:{}",module_path!() ,file!(), line!()); trace!("Got fulfill response to request id {}", request_id);
+                println!("[MY_LOG TRACE] {}:{}", file!(), line!()); trace!("Got fulfill response to request id {}", request_id);
                 if let Some(channel) = (*pending_requests.lock()).remove(&request_id) {
                     let _ = channel.send(Ok(fulfill)).map_err(|fulfill| error!("Error forwarding Fulfill packet back to the Future that sent the Prepare: {:?}", fulfill));
                 } else {
@@ -97,7 +97,7 @@ async fn handle_message<A: BtpAccount>(
                 }
             }
             Ok((request_id, Packet::Reject(reject))) => {
-                println!("[MY_LOG TRACE] {} {}:{}",module_path!() ,file!(), line!()); trace!("Got reject response to request id {}", request_id);
+                println!("[MY_LOG TRACE] {}:{}", file!(), line!()); trace!("Got reject response to request id {}", request_id);
                 if let Some(channel) = (*pending_requests.lock()).remove(&request_id) {
                     let _ = channel.send(Err(reject)).map_err(|reject| error!("Error forwarding Reject packet back to the Future that sent the Prepare: {:?}", reject));
                 } else {
@@ -108,12 +108,12 @@ async fn handle_message<A: BtpAccount>(
                 }
             }
             Err(_) => {
-                println!("[MY_LOG DEBUG] {} {}:{}",module_path!() ,file!(), line!()); debug!("Unable to parse ILP packet from BTP packet (if this is the first time this appears, the packet was probably the auth response)");
+                println!("[MY_LOG DEBUG] {}:{}", file!(), line!()); debug!("Unable to parse ILP packet from BTP packet (if this is the first time this appears, the packet was probably the auth response)");
                 // TODO Send error back
             }
         }
     } else if message.is_ping() {
-        println!("[MY_LOG TRACE] {} {}:{}",module_path!() ,file!(), line!()); trace!("Responding to Ping message from account {}", account.id());
+        println!("[MY_LOG TRACE] {}:{}", file!(), line!()); trace!("Responding to Ping message from account {}", account.id());
         // Writes back the PONG to the websocket
         let _ = tx_clone
             .unbounded_send(PONG.clone())
@@ -150,7 +150,7 @@ where
     // TODO is there some more automatic way of knowing when we should close the connections?
     // The problem is that the WS client can be a server too, so it's not clear when we are done with it
     pub fn close(&self) {
-        println!("[MY_LOG DEBUG] {} {}:{}",module_path!() ,file!(), line!()); debug!("Closing all WebSocket connections");
+        println!("[MY_LOG DEBUG] {}:{}", file!(), line!()); debug!("Closing all WebSocket connections");
         self.close_all_connections.lock().take();
     }
 
@@ -173,7 +173,7 @@ where
         // Responsible mainly for responding to Pings
         let write_to_ws = client_rx.map(Ok).forward(write).then(move |_| {
             async move {
-                println!("[MY_LOG DEBUG] {} {}:{}",module_path!() ,file!(), line!()); debug!(
+                println!("[MY_LOG DEBUG] {}:{}", file!(), line!()); debug!(
                     "Finished forwarding to WebSocket stream for account: {}",
                     account_id
                 );
@@ -202,7 +202,7 @@ where
         let read = valve.wrap(read); // close when `write_to_ws` calls `drop(connection)`
         let read = self.stream_valve.wrap(read);
         let read_from_ws = read.for_each(handle_message_fn).then(move |_| async move {
-            println!("[MY_LOG DEBUG] {} {}:{}",module_path!() ,file!(), line!()); debug!(
+            println!("[MY_LOG DEBUG] {}:{}", file!(), line!()); debug!(
                 "Finished reading from WebSocket stream for account: {}",
                 account_id
             );
@@ -255,7 +255,7 @@ where
                     from: account,
                     prepare,
                 };
-                println!("[MY_LOG TRACE] {} {}:{}",module_path!() ,file!(), line!()); trace!(
+                println!("[MY_LOG TRACE] {}:{}", file!(), line!()); trace!(
                     "Handling incoming request {} from account: {} (id: {})",
                     request_id,
                     request.from.username(),
@@ -283,7 +283,7 @@ where
                 }
             }
 
-            println!("[MY_LOG TRACE] {} {}:{}",module_path!() ,file!(), line!()); trace!("Finished reading from pending_incoming buffer");
+            println!("[MY_LOG TRACE] {}:{}", file!(), line!()); trace!("Finished reading from pending_incoming buffer");
             Ok::<(), ()>(())
         };
 
@@ -317,7 +317,7 @@ where
             // gotten the response to our outgoing request
             let keep_connections_open = self.close_all_connections.clone();
 
-            println!("[MY_LOG TRACE] {} {}:{}",module_path!() ,file!(), line!()); trace!(
+            println!("[MY_LOG TRACE] {}:{}", file!(), line!()); trace!(
                 "Sending outgoing request {} to {} ({})",
                 request_id,
                 request.to.username(),
@@ -397,7 +397,7 @@ where
             if request.to.get_ilp_over_btp_url().is_some()
                 || request.to.get_ilp_over_btp_outgoing_token().is_some()
             {
-                println!("[MY_LOG TRACE] {} {}:{}",module_path!() ,file!(), line!()); trace!(
+                println!("[MY_LOG TRACE] {}:{}", file!(), line!()); trace!(
                     "No open connection for account: {}, forwarding request to the next service",
                     request.to.username()
                 );

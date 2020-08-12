@@ -277,14 +277,17 @@ impl<'a> PrepareBuilder<'a> {
         buffer.put_var_octet_string::<&[u8]>(self.destination.as_ref());
         buffer.put_var_octet_string(self.data);
 
-        Prepare {
+        let prepare = Prepare {
             buffer,
             content_offset,
             destination: self.destination.clone(),
             amount: self.amount,
             expires_at: self.expires_at,
             data_offset: buf_size - data_size,
-        }
+        };
+        // println!("[MY_LOG V] {:?} {} {}:{} ", prepare, module_path!() ,file!(), line!());
+        println!("[MY_LOG INSPECT] {}:{} " ,file!(), line!());
+        prepare
     }
 }
 
@@ -375,6 +378,7 @@ impl<'a> FulfillBuilder<'a> {
         let content_offset = buffer.len();
         buffer.put_slice(&self.fulfillment[..]);
         buffer.put_var_octet_string(&self.data[..]);
+        println!("[MY_LOG ADDED] {} {}:{} ", module_path!() ,file!(), line!());
         Fulfill {
             buffer,
             content_offset,

@@ -124,7 +124,7 @@ where
         request: RouteUpdateRequest,
     ) -> Result<Vec<String>, String> {
         if self.id != request.routing_table_id {
-            println!("[MY_LOG DEBUG] {} {}:{}",module_path!() ,file!(), line!()); debug!(
+            println!("[MY_LOG DEBUG] {}:{}", file!(), line!()); debug!(
                 "Saw new routing table. Old ID: {}, new ID: {}",
                 hex::encode(&self.id[..]),
                 hex::encode(&request.routing_table_id[..])
@@ -144,7 +144,7 @@ where
 
         // It is OK to receive epochs with the same index as our current epoch
         if request.to_epoch_index < self.epoch {
-            println!("[MY_LOG TRACE] {} {}:{}",module_path!() ,file!(), line!()); trace!(
+            println!("[MY_LOG TRACE] {}:{}", file!(), line!()); trace!(
                 "Ignoring routing update from old epoch. Received epoch: {}. Our epoch: {}",
                 request.to_epoch_index,
                 self.epoch
@@ -157,7 +157,7 @@ where
         self.epoch = request.to_epoch_index;
 
         if request.new_routes.is_empty() && request.withdrawn_routes.is_empty() {
-            println!("[MY_LOG TRACE] {} {}:{}",module_path!() ,file!(), line!()); trace!(
+            println!("[MY_LOG TRACE] {}:{}", file!(), line!()); trace!(
                 "Got heartbeat route update for table ID: {}, epoch: {}",
                 hex::encode(&self.id[..]),
                 self.epoch
@@ -179,7 +179,7 @@ where
             }
         }
 
-        println!("[MY_LOG TRACE] {} {}:{}",module_path!() ,file!(), line!()); trace!(
+        println!("[MY_LOG TRACE] {}:{}", file!(), line!()); trace!(
             "Updated routing table {} to epoch: {}",
             hex::encode(&self.id[..]),
             self.epoch

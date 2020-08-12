@@ -26,6 +26,6 @@ where
             err
         );
     })?;
-    println!("[MY_LOG DEBUG] {} {}:{}",module_path!() ,file!(), line!()); debug!("Got ILDCP response: {:?}", response);
+    println!("[MY_LOG DEBUG] {}:{}", file!(), line!()); debug!("Got ILDCP response: {:?}", response);
     Ok(response)
 }

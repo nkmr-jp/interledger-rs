@@ -71,7 +71,7 @@ where
         let ilp_address_clone = ilp_address.clone();
         let self_clone = self.clone();
         if let Some(url) = request.to.get_http_url() {
-            println!("[MY_LOG TRACE] {} {}:{}",module_path!() ,file!(), line!()); trace!(
+            println!("[MY_LOG TRACE] {}:{}", file!(), line!()); trace!(
                 "Sending outgoing ILP over HTTP packet to account: {} (URL: {})",
                 request.to.id(),
                 url.as_str()

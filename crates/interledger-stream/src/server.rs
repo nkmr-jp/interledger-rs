@@ -58,7 +58,7 @@ impl ConnectionGenerator {
         // is valid and adding base64-url characters will always be valid
         let destination_account = base_address.with_suffix(&token.as_ref()).unwrap();
 
-        println!("[MY_LOG DEBUG] {} {}:{}",module_path!() ,file!(), line!()); debug!("Generated address: {}", destination_account);
+        println!("[MY_LOG DEBUG] {}:{}", file!(), line!()); debug!("Generated address: {}", destination_account);
         (destination_account, shared_secret)
     }
 
@@ -235,7 +235,7 @@ fn receive_money(
     let copied_data = BytesMut::from(prepare.data());
 
     let stream_packet = StreamPacket::from_encrypted(shared_secret, copied_data).map_err(|_| {
-        println!("[MY_LOG DEBUG] {} {}:{}",module_path!() ,file!(), line!()); debug!("Unable to parse data, rejecting Prepare packet");
+        println!("[MY_LOG DEBUG] {}:{}", file!(), line!()); debug!("Unable to parse data, rejecting Prepare packet");
         RejectBuilder {
             code: ErrorCode::F06_UNEXPECTED_PAYMENT,
             message: b"Could not decrypt data",
@@ -281,7 +281,7 @@ fn receive_money(
             frames: &response_frames,
         }
         .build();
-        println!("[MY_LOG DEBUG] {} {}:{}",module_path!() ,file!(), line!()); debug!(
+        println!("[MY_LOG DEBUG] {}:{}", file!(), line!()); debug!(
             "Fulfilling prepare for amount {} with fulfillment: {} and encrypted stream packet: {:?}",
             prepare_amount,
             hex::encode(&fulfillment[..]),
@@ -303,15 +303,15 @@ fn receive_money(
         }
         .build();
         if !is_fulfillable {
-            println!("[MY_LOG DEBUG] {} {}:{}",module_path!() ,file!(), line!()); debug!("Packet is unfulfillable");
+            println!("[MY_LOG DEBUG] {}:{}", file!(), line!()); debug!("Packet is unfulfillable");
         } else if prepare_amount < stream_packet.prepare_amount() {
-            println!("[MY_LOG DEBUG] {} {}:{}",module_path!() ,file!(), line!()); debug!(
+            println!("[MY_LOG DEBUG] {}:{}", file!(), line!()); debug!(
                 "Received only: {} when we should have received at least: {}",
                 prepare_amount,
                 stream_packet.prepare_amount()
             );
         }
-        println!("[MY_LOG DEBUG] {} {}:{}",module_path!() ,file!(), line!()); debug!(
+        println!("[MY_LOG DEBUG] {}:{}", file!(), line!()); debug!(
             "Rejecting Prepare and including encrypted stream packet {:?}",
             response_packet
         );

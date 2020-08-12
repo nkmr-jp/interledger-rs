@@ -59,7 +59,7 @@ where
         // through the routing table
         let dest: &str = &destination;
         if let Some(account_id) = routing_table.get(dest) {
-            println!("[MY_LOG TRACE] {} {}:{}",module_path!() ,file!(), line!()); trace!(
+            println!("[MY_LOG TRACE] {}:{}", file!(), line!()); trace!(
                 "Found direct route for address: \"{}\". Account: {}",
                 destination,
                 account_id
@@ -78,7 +78,7 @@ where
                 }
             }
             if let Some(account_id) = next_hop {
-                println!("[MY_LOG TRACE] {} {}:{}",module_path!() ,file!(), line!()); trace!(
+                println!("[MY_LOG TRACE] {}:{}", file!(), line!()); trace!(
                     "Found matching route for address: \"{}\". Prefix: \"{}\", account: {}",
                     destination,
                     matching_prefix,

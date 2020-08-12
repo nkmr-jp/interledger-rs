@@ -91,7 +91,7 @@ where
         .get_ilp_over_btp_outgoing_token()
         .map(|s| s.to_vec())
         .unwrap_or_default();
-    println!("[MY_LOG DEBUG] {} {}:{}",module_path!() ,file!(), line!()); debug!("Connecting to {}", url);
+    println!("[MY_LOG DEBUG] {}:{}", file!(), line!()); debug!("Connecting to {}", url);
 
     let (mut connection, _) = connect_async(url.clone())
         .map_err(|err| {
@@ -103,7 +103,7 @@ where
         })
         .await?;
 
-    println!("[MY_LOG TRACE] {} {}:{}",module_path!() ,file!(), line!()); trace!(
+    println!("[MY_LOG TRACE] {}:{}", file!(), line!()); trace!(
         "Connected to account {} (UID: {}) (URI: {}), sending auth packet",
         account.username(),
         account_id,
@@ -137,7 +137,7 @@ where
 
     match result {
         Ok(_) => {
-            println!("[MY_LOG DEBUG] {} {}:{}",module_path!() ,file!(), line!()); debug!("Connected to account {}'s server", account.id());
+            println!("[MY_LOG DEBUG] {}:{}", file!(), line!()); debug!("Connected to account {}'s server", account.id());
             let connection = connection.filter_map(|v| async move { v.ok() });
             service.add_connection(account, connection);
             Ok(())

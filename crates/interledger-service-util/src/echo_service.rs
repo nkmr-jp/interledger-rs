@@ -63,7 +63,7 @@ where
         if !should_echo {
             return self.next.handle_request(request).await;
         }
-        println!("[MY_LOG DEBUG] {} {}:{}",module_path!() ,file!(), line!()); debug!("Responding to Echo protocol request: {:?}", request);
+        println!("[MY_LOG DEBUG] {}:{}", file!(), line!()); debug!("Responding to Echo protocol request: {:?}", request);
 
         // TODO Define EchoPacket struct and implement From<&p[u8]> for it
 

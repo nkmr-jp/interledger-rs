@@ -43,7 +43,7 @@ impl RedisReconnect {
     pub async fn reconnect(&self) -> Result<()> {
         let shared_connection = get_shared_connection(self.redis_info.clone()).await?;
         (*self.conn.write()) = shared_connection;
-        println!("[MY_LOG DEBUG] {} {}:{}",module_path!() ,file!(), line!()); debug!("Reconnected to Redis");
+        println!("[MY_LOG DEBUG] {}:{}", file!(), line!()); debug!("Reconnected to Redis");
         Ok(())
     }
 
@@ -65,7 +65,7 @@ impl ConnectionLike for RedisReconnect {
                 Ok(res) => Ok(res),
                 Err(error) => {
                     if error.is_connection_dropped() {
-                        println!("[MY_LOG DEBUG] {} {}:{}",module_path!() ,file!(), line!()); debug!("Redis connection was dropped, attempting to reconnect");
+                        println!("[MY_LOG DEBUG] {}:{}", file!(), line!()); debug!("Redis connection was dropped, attempting to reconnect");
                         // FIXME: this conceals potential reconnect errors
                         let _ = self.reconnect().await;
                     }
@@ -89,7 +89,7 @@ impl ConnectionLike for RedisReconnect {
                 Ok(res) => Ok(res),
                 Err(error) => {
                     if error.is_connection_dropped() {
-                        println!("[MY_LOG DEBUG] {} {}:{}",module_path!() ,file!(), line!()); debug!("Redis connection was dropped, attempting to reconnect");
+                        println!("[MY_LOG DEBUG] {}:{}", file!(), line!()); debug!("Redis connection was dropped, attempting to reconnect");
                         // FIXME: this conceals potential reconnect errors
                         let _ = self.reconnect().await;
                     }

@@ -369,7 +369,7 @@ where
                     })
                     .await?;
 
-                    println!("[MY_LOG DEBUG] {} {}:{}",module_path!() ,file!(), line!()); debug!("Sent SPSP payment, receipt: {:?}", receipt);
+                    println!("[MY_LOG DEBUG] {}:{}", file!(), line!()); debug!("Sent SPSP payment, receipt: {:?}", receipt);
                     Ok::<Json, Rejection>(warp::reply::json(&json!(receipt)))
                 }
             },
@@ -506,7 +506,7 @@ where
     A: CcpRoutingAccount + Clone + Send + Sync + 'static,
     S: NodeStore<Account = A> + AddressStore + Clone + Send + Sync + 'static,
 {
-    println!("[MY_LOG DEBUG] {} {}:{}",module_path!() ,file!(), line!()); debug!(
+    println!("[MY_LOG DEBUG] {}:{}", file!(), line!()); debug!(
         "Getting ILP address from parent account: {} (id: {})",
         parent.username(),
         parent.id()
@@ -534,10 +534,10 @@ where
         error!("{}", msg);
         ApiError::internal_server_error().detail(msg)
     })?;
-    println!("[MY_LOG DEBUG] {} {}:{}",module_path!() ,file!(), line!()); debug!("Got ILDCP response from parent: {:?}", info);
+    println!("[MY_LOG DEBUG] {}:{}", file!(), line!()); debug!("Got ILDCP response from parent: {:?}", info);
     let ilp_address = info.ilp_address();
 
-    println!("[MY_LOG DEBUG] {} {}:{}",module_path!() ,file!(), line!()); debug!("ILP address is now: {}", ilp_address);
+    println!("[MY_LOG DEBUG] {}:{}", file!(), line!()); debug!("ILP address is now: {}", ilp_address);
     // TODO we may want to make this trigger the CcpRouteManager to request
     let prepare = RouteControlRequest {
         mode: Mode::Sync,
@@ -554,7 +554,7 @@ where
     store.set_ilp_address(ilp_address).await?;
 
     // Get the parent's routes for us
-    println!("[MY_LOG DEBUG] {} {}:{}",module_path!() ,file!(), line!()); debug!("Asking for routes from {:?}", parent.clone());
+    println!("[MY_LOG DEBUG] {}:{}", file!(), line!()); debug!("Asking for routes from {:?}", parent.clone());
     service
         .send_request(OutgoingRequest {
             from: parent.clone(),
@@ -597,7 +597,7 @@ where
     // Try to connect to the account's BTP socket if they have
     // one configured
     if account.get_ilp_over_btp_url().is_some() {
-        println!("[MY_LOG TRACE] {} {}:{}",module_path!() ,file!(), line!()); trace!("Newly inserted account has a BTP URL configured, will try to connect");
+        println!("[MY_LOG TRACE] {}:{}", file!(), line!()); trace!("Newly inserted account has a BTP URL configured, will try to connect");
         connect_to_service_account(account.clone(), true, btp).await?
     }
 
@@ -622,7 +622,7 @@ where
     if let Some(se_url) = settlement_engine_url {
         let id = account.id();
         let http_client = SettlementClient::default();
-        println!("[MY_LOG TRACE] {} {}:{}",module_path!() ,file!(), line!()); trace!(
+        println!("[MY_LOG TRACE] {}:{}", file!(), line!()); trace!(
             "Sending account {} creation request to settlement engine: {:?}",
             id,
             se_url.clone()
@@ -636,7 +636,7 @@ where
             .await?;
 
         if response.status().is_success() {
-            println!("[MY_LOG TRACE] {} {}:{}",module_path!() ,file!(), line!()); trace!("Account {} created on the SE", id);
+            println!("[MY_LOG TRACE] {}:{}", file!(), line!()); trace!("Account {} created on the SE", id);
 
             // We will pre-fund our account with 0, which will return
             // the current settle_to value

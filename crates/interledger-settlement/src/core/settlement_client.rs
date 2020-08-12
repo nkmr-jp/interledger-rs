@@ -98,7 +98,7 @@ impl SettlementClient {
             .path_segments_mut()
             .expect("Invalid settlement engine URL")
             .push(ACCOUNTS_ENDPOINT);
-        println!("[MY_LOG TRACE] {} {}:{}",module_path!() ,file!(), line!()); trace!(
+        println!("[MY_LOG TRACE] {}:{}", file!(), line!()); trace!(
             "Sending account {} creation request to settlement engine: {:?}",
             id,
             se_url.clone()
@@ -128,7 +128,7 @@ impl SettlementClient {
             .push(ACCOUNTS_ENDPOINT)
             .push(&id.to_string())
             .push("settlements");
-        println!("[MY_LOG DEBUG] {} {}:{}",module_path!() ,file!(), line!()); debug!(
+        println!("[MY_LOG DEBUG] {}:{}", file!(), line!()); debug!(
             "Sending settlement of amount {} to settlement engine: {}",
             amount, settlement_engine_url
         );

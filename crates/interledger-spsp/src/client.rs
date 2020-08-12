@@ -11,7 +11,7 @@ use tracing::{debug, error, trace};
 /// Get an ILP Address and shared secret by the receiver of this payment for this connection
 pub async fn query(server: &str) -> Result<SpspResponse, Error> {
     let server = payment_pointer_to_url(server);
-    println!("[MY_LOG TRACE] {} {}:{}",module_path!() ,file!(), line!()); trace!("Querying receiver: {}", server);
+    println!("[MY_LOG TRACE] {}:{}", file!(), line!()); trace!("Querying receiver: {}", server);
 
     let client = Client::new();
     let res = client
@@ -53,7 +53,7 @@ where
         error!("Error parsing address");
         Error::InvalidSpspServerResponseError(err.to_string())
     })?;
-    println!("[MY_LOG DEBUG] {} {}:{}",module_path!() ,file!(), line!()); debug!("Sending SPSP payment to address: {}", addr);
+    println!("[MY_LOG DEBUG] {}:{}", file!(), line!()); debug!("Sending SPSP payment to address: {}", addr);
 
     let receipt = send_money(
         service,
@@ -70,7 +70,7 @@ where
     })
     .await?;
 
-    println!("[MY_LOG DEBUG] {} {}:{}",module_path!() ,file!(), line!()); debug!("Sent SPSP payment. StreamDelivery: {:?}", receipt);
+    println!("[MY_LOG DEBUG] {}:{}", file!(), line!()); debug!("Sent SPSP payment. StreamDelivery: {:?}", receipt);
     Ok(receipt)
 }
 
@@ -89,7 +89,7 @@ fn payment_pointer_to_url(payment_pointer: &str) -> String {
     } else if num_slashes == 1 && url.ends_with('/') {
         url.push_str(".well-known/pay");
     }
-    println!("[MY_LOG TRACE] {} {}:{}",module_path!() ,file!(), line!()); trace!(
+    println!("[MY_LOG TRACE] {}:{}", file!(), line!()); trace!(
         "Converted payment pointer: {} to URL: {}",
         payment_pointer,
         url
