@@ -206,6 +206,7 @@ where
                 "Changing ILP address from {} to {}",
                 *current_ilp_address, ilp_address
             );
+            println!("[MY_LOG INSPECT] CcpRouteManager.update_ilp_address() {}:{} ",file!(), line!());
             // release the read lock
             drop(current_ilp_address);
             *self.ilp_address.write() = ilp_address;
@@ -260,6 +261,7 @@ where
             request.from.id(),
             control
         );
+        println!("[MY_LOG INSPECT] CcpRouteManager.handle_route_control_request() {}:{} ",file!(), line!());
 
         // TODO stop sending updates if they are in Idle mode
         if control.mode == Mode::Sync {
@@ -376,6 +378,7 @@ where
             request.from.id(),
             update
         );
+        println!("[MY_LOG INSPECT] CcpRouteManager.handle_update_request() {}:{} ",file!(), line!());
 
         // Filter out routes that don't make sense or that we won't accept
         let update = self.filter_routes(update);
@@ -490,6 +493,7 @@ where
             account_id,
             hex::encode(&last_known_routing_table_id[..]),
             last_known_epoch);
+        println!("[MY_LOG INSPECT] CcpRouteManager.send_route_control_request() {}:{} ",file!(), line!());
         let prepare = control.to_prepare();
         let result = self
             .clone()
@@ -597,6 +601,7 @@ where
                         account.username(),
                         account.id(),
                     );
+                    println!("[MY_LOG INSPECT] CcpRouteManager.update_best_routes() {}:{} ",file!(), line!());
                     local_table.set_route(prefix.to_string(), account.clone(), route.clone());
 
                     // Update the forwarding table
@@ -770,6 +775,7 @@ where
                     (_, Ok(_)) => {
                         if unavailable_accounts.remove(&account.id()).is_some() {
                             println!("[MY_LOG DEBUG] {}:{}", file!(), line!()); debug!("Account {} (id: {}) is no longer unavailable, resuming route broadcasts", account.username(), account.id());
+                            println!("[MY_LOG INSPECT] CcpRouteManager.send_route_updates() {}:{} ",file!(), line!());
                         }
                     }
                 }
@@ -870,6 +876,7 @@ where
             "Sending individual route update to account: {} for epochs from: {} to: {}",
             account_id, from_epoch_index, to_epoch_index
         );
+        println!("[MY_LOG INSPECT] CcpRouteManager.send_route_update() {}:{} ",file!(), line!());
         let result = self
             .outgoing
             .clone()

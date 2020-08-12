@@ -139,6 +139,7 @@ where
     A: Account,
 {
     pub fn new(server_secret: Bytes, store: S, next: O) -> Self {
+        println!("[MY_LOG INSPECT] StreamReceiverService.new() {}:{} ",file!(), line!());
         let connection_generator = ConnectionGenerator::new(server_secret);
         StreamReceiverService {
             connection_generator,
@@ -159,6 +160,7 @@ where
     /// Try fulfilling the request if it is for this STREAM server or pass it to the next
     /// outgoing handler if not.
     async fn send_request(&mut self, request: OutgoingRequest<A>) -> IlpResult {
+        println!("[MY_LOG INSPECT] OutgoingService.send_request() {}:{} ",file!(), line!());
         let to_username = request.to.username().clone();
         let from_username = request.from.username().clone();
         let amount = request.prepare.amount();

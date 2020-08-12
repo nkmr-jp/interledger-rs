@@ -34,6 +34,7 @@ impl SettlementClient {
     /// Sends an idempotent account creation request to the engine (will retry if it fails)
     /// This is done by sending a POST to /accounts with the provided `id` as the request's body
     pub async fn create_engine_account(&self, id: Uuid, engine_url: Url) -> Response {
+        println!("[MY_LOG INSPECT] SettlementClient.create_engine_account() {}:{} ",file!(), line!());
         FutureRetry::new(
             move || self.create_engine_account_once(id, engine_url.clone()),
             RequestErrorHandler::new(self.max_retries),
@@ -45,6 +46,7 @@ impl SettlementClient {
     /// This is done by sending a POST to /accounts/:id/messages with the provided `message`
     /// as the request's body
     pub async fn send_message(&self, id: Uuid, engine_url: Url, message: Vec<u8>) -> Response {
+        println!("[MY_LOG INSPECT] SettlementClient.send_message() {}:{} ",file!(), line!());
         FutureRetry::new(
             move || self.send_message_once(id, engine_url.clone(), message.clone()),
             RequestErrorHandler::new(self.max_retries),
@@ -84,6 +86,7 @@ impl SettlementClient {
         amount: u64,
         asset_scale: u8,
     ) -> Response {
+        println!("[MY_LOG INSPECT] SettlementClient.send_settlement() {}:{} ",file!(), line!());
         FutureRetry::new(
             move || self.send_settlement_once(id, engine_url.clone(), amount, asset_scale),
             RequestErrorHandler::new(self.max_retries),
@@ -119,6 +122,7 @@ impl SettlementClient {
         amount: u64,
         asset_scale: u8,
     ) -> Response {
+        println!("[MY_LOG INSPECT] SettlementClient.send_settlement_once() {}:{} ",file!(), line!());
         let mut settlement_engine_url = engine_url;
 
         // $URL/accounts/:account_id/settlements

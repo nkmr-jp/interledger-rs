@@ -12,6 +12,7 @@ use tracing::{debug, error, trace};
 pub async fn query(server: &str) -> Result<SpspResponse, Error> {
     let server = payment_pointer_to_url(server);
     println!("[MY_LOG TRACE] {}:{}", file!(), line!()); trace!("Querying receiver: {}", server);
+    println!("[MY_LOG INSPECT] query() {}:{} ",file!(), line!());
 
     let client = Client::new();
     let res = client
@@ -54,6 +55,7 @@ where
         Error::InvalidSpspServerResponseError(err.to_string())
     })?;
     println!("[MY_LOG DEBUG] {}:{}", file!(), line!()); debug!("Sending SPSP payment to address: {}", addr);
+    println!("[MY_LOG INSPECT] pay() {}:{} ",file!(), line!());
 
     let receipt = send_money(
         service,

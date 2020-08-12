@@ -103,13 +103,16 @@ impl<'a> StreamPacketBuilder<'a> {
             buffer_unencrypted.put_var_octet_string(contents);
         }
 
-        StreamPacket {
+        let stream = StreamPacket {
             buffer_unencrypted: BytesMut::from(&buffer_unencrypted[..]),
             sequence: self.sequence,
             ilp_packet_type: self.ilp_packet_type,
             prepare_amount: self.prepare_amount,
             frames_offset,
-        }
+        };
+        println!("[MY_LOG INSPECT] StreamPacketBuilder.build() {}:{} ",file!(), line!());
+        println!("[MY_LOG INSPECT] StreamPacket:{:?} {}:{} ",stream,file!(), line!());
+        stream
     }
 }
 

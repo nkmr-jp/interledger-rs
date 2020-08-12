@@ -286,7 +286,7 @@ impl<'a> PrepareBuilder<'a> {
             data_offset: buf_size - data_size,
         };
         // println!("[MY_LOG V] {:?} {} {}:{} ", prepare, module_path!() ,file!(), line!());
-        println!("[MY_LOG INSPECT] {}:{} " ,file!(), line!());
+        println!("[MY_LOG INSPECT] PrepareBuilder.build() {}:{} " ,file!(), line!());
         prepare
     }
 }
@@ -378,7 +378,7 @@ impl<'a> FulfillBuilder<'a> {
         let content_offset = buffer.len();
         buffer.put_slice(&self.fulfillment[..]);
         buffer.put_var_octet_string(&self.data[..]);
-        println!("[MY_LOG ADDED] {} {}:{} ", module_path!() ,file!(), line!());
+        println!("[MY_LOG INSPECT] FulfillBuilder.build() {}:{} " ,file!(), line!());
         Fulfill {
             buffer,
             content_offset,
@@ -516,6 +516,7 @@ impl<'a> RejectBuilder<'a> {
         buffer.put_var_octet_string::<&[u8]>(trigerred_by_message);
         buffer.put_var_octet_string(self.message);
         buffer.put_var_octet_string(self.data);
+        println!("[MY_LOG INSPECT] RejectBuilder.build() {}:{} " ,file!(), line!());
         Reject {
             buffer,
             code: self.code,

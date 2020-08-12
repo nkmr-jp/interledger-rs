@@ -31,6 +31,7 @@ where
     E: SettlementEngine + Clone + Send + Sync,
     S: IdempotentStore + Clone + Send + Sync,
 {
+    println!("[MY_LOG INSPECT] create_engine_account() {}:{} ",file!(), line!());
     let input_hash = get_hash_of(account_id.id.as_ref());
     let (status_code, message) = make_idempotent_call(
         store,
@@ -61,6 +62,7 @@ where
     E: SettlementEngine + Clone + Send + Sync,
     S: IdempotentStore + Clone + Send + Sync,
 {
+    println!("[MY_LOG INSPECT] delete_engine_account() {}:{} ",file!(), line!());
     let input_hash = get_hash_of(account_id.as_ref());
     let (status_code, message) = make_idempotent_call(
         store,
@@ -92,6 +94,7 @@ where
     E: SettlementEngine + Clone + Send + Sync,
     S: IdempotentStore + Clone + Send + Sync,
 {
+    println!("[MY_LOG INSPECT] engine_send_money() {}:{} ",file!(), line!());
     let input = format!("{}{:?}", id, quantity);
     let input_hash = get_hash_of(input.as_ref());
     let (status_code, message) = make_idempotent_call(
@@ -124,6 +127,7 @@ where
     E: SettlementEngine + Clone + Send + Sync,
     S: IdempotentStore + Clone + Send + Sync,
 {
+    println!("[MY_LOG INSPECT] engine_receive_message() {}:{} ",file!(), line!());
     let input = format!("{}{:?}", id, message);
     let input_hash = get_hash_of(input.as_ref());
     let (status_code, message) = make_idempotent_call(

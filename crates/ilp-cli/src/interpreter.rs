@@ -35,6 +35,7 @@ pub fn run(matches: &ArgMatches) -> Result<Response, Error> {
         client: Client::new(),
         url: matches.value_of("node_url").unwrap(), // infallible unwrap
     };
+    println!("[MY_LOG INSPECT] run() {}:{} ", file!(), line!());
 
     // Dispatch based on parsed input
     match matches.subcommand() {
@@ -225,6 +226,7 @@ impl NodeClient<'_> {
     fn post_account_payments(&self, matches: &ArgMatches) -> Result<Response, Error> {
         let (auth, mut args) = extract_args(matches);
         let user = args.remove("sender_username").unwrap(); // infallible unwrap
+        println!("[MY_LOG INSPECT] NodeClient.post_account_payments() {}:{} ",file!(), line!());
         self.client
             .post(&format!("{}/accounts/{}/payments", self.url, user))
             .bearer_auth(auth)

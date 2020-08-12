@@ -45,6 +45,7 @@ where
     A: SettlementAccount + Account + Send + Sync,
 {
     async fn handle_request(&mut self, request: IncomingRequest<A>) -> IlpResult {
+        println!("[MY_LOG INSPECT] IncomingService.handle_request() {}:{} ",file!(), line!());
         // Only handle the request if the destination address matches the ILP address
         // of the settlement engine being used for this account
         if let Some(settlement_engine_details) = request.from.settlement_engine_details() {

@@ -771,6 +771,7 @@ impl BalanceStore for RedisStore {
             "Processed prepare with incoming amount: {}. Account {} has balance (including prepaid amount): {} ",
             incoming_amount, from_account_id, balance
         );
+        println!("[MY_LOG INSPECT] BalanceStore.update_balances_for_prepare() {}:{} " ,file!(), line!());
         Ok(())
     }
 
@@ -792,6 +793,7 @@ impl BalanceStore for RedisStore {
             balance,
             amount_to_settle,
         );
+        println!("[MY_LOG INSPECT] BalanceStore.update_balances_for_fulfill() {}:{} " ,file!(), line!());
         Ok((balance, amount_to_settle))
     }
 
@@ -814,6 +816,7 @@ impl BalanceStore for RedisStore {
             "Processed reject for incoming amount: {}. Account {} has balance (including prepaid amount): {}",
             incoming_amount, from_account_id, balance
         );
+        println!("[MY_LOG INSPECT] BalanceStore.update_balances_for_reject() {}:{} " ,file!(), line!());
 
         Ok(())
     }
@@ -846,6 +849,7 @@ impl ExchangeRateStore for RedisStore {
     ) -> Result<(), ExchangeRateStoreError> {
         // TODO publish rate updates through a pubsub mechanism to support horizontally scaling nodes
         (*self.exchange_rates.write()) = rates;
+        println!("[MY_LOG INSPECT] ExchangeRateStore.set_exchange_rates() {}:{} " ,file!(), line!());
         Ok(())
     }
 }
@@ -969,6 +973,7 @@ impl NodeStore for RedisStore {
             .encrypt_tokens(&self.encryption_key.expose_secret().0);
 
         self.redis_insert_account(&encrypted).await?;
+        println!("[MY_LOG INSPECT] NodeStore.insert_account() {}:{} " ,file!(), line!());
         Ok(account)
     }
 
@@ -994,6 +999,7 @@ impl NodeStore for RedisStore {
             .encrypt_tokens(&self.encryption_key.expose_secret().0);
 
         self.redis_update_account(&encrypted).await?;
+        println!("[MY_LOG INSPECT] NodeStore.update_account() {}:{} " ,file!(), line!());
         Ok(account)
     }
 
@@ -1146,6 +1152,7 @@ impl NodeStore for RedisStore {
             .set(DEFAULT_ROUTE_KEY, RedisAccountId(account_id))
             .await?;
         println!("[MY_LOG DEBUG] {}:{}", file!(), line!()); debug!("Set default route to account id: {}", account_id);
+        println!("[MY_LOG INSPECT] NodeStore.set_default_route() {}:{} " ,file!(), line!());
         update_routes(connection, routing_table).await?;
         Ok(())
     }
@@ -1160,6 +1167,7 @@ impl NodeStore for RedisStore {
             .map(|(asset_code, url)| (asset_code, url.to_string()))
             .collect();
         println!("[MY_LOG DEBUG] {}:{}", file!(), line!()); debug!("Setting settlement engines to {:?}", asset_to_url_map);
+        println!("[MY_LOG INSPECT] NodeStore.set_settlement_engines() {}:{} " ,file!(), line!());
         connection
             .hset_multiple(SETTLEMENT_ENGINES_KEY, &asset_to_url_map)
             .await?;
@@ -1198,6 +1206,7 @@ impl AddressStore for RedisStore {
     // updates their ILP Address to match the new address.
     async fn set_ilp_address(&self, ilp_address: Address) -> Result<(), AddressStoreError> {
         println!("[MY_LOG DEBUG] {}:{}", file!(), line!()); debug!("Setting ILP address to: {}", ilp_address);
+        println!("[MY_LOG INSPECT] AddressStore.set_ilp_address() {}:{} " ,file!(), line!());
         let routing_table = self.routes.clone();
         let mut connection = self.connection.clone();
 
@@ -1381,6 +1390,7 @@ impl CcpRoutingStore for RedisStore {
 
         pipe.query_async(&mut connection).await?;
         println!("[MY_LOG TRACE] {}:{}", file!(), line!()); trace!("Saved {} routes to Redis", num_routes);
+        println!("[MY_LOG INSPECT] NodeStore.set_routes() {}:{} " ,file!(), line!());
 
         update_routes(connection, self.routes.clone()).await?;
         Ok(())
@@ -1564,6 +1574,7 @@ impl SettlementStore for RedisStore {
             amount,
             balance
         );
+        println!("[MY_LOG INSPECT] SettlementStore.update_balance_for_incoming_settlement() {}:{} " ,file!(), line!());
         Ok(())
     }
 
@@ -1589,6 +1600,7 @@ impl SettlementStore for RedisStore {
             settle_amount,
             balance
         );
+        println!("[MY_LOG INSPECT] SettlementStore.refund_settlement() {}:{} " ,file!(), line!());
         Ok(())
     }
 }

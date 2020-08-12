@@ -50,6 +50,7 @@ where
     /// If not it scans through the routing table and checks if the route prefix matches
     /// the prepare packet's destination or if it's a catch-all address (i.e. empty prefix)
     async fn handle_request(&mut self, request: IncomingRequest<S::Account>) -> IlpResult {
+        println!("[MY_LOG INSPECT] IncomingService.handle_request() {}:{} ",file!(), line!());
         let destination = request.prepare.destination();
         let mut next_hop = None;
         let routing_table = self.store.routing_table();

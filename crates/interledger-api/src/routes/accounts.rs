@@ -75,6 +75,7 @@ where
         + Sync
         + 'static,
 {
+    println!("[MY_LOG INSPECT] run() {}:{} ",file!(), line!());
     // TODO can we make any of the Filters const or put them in once_cell?
     let with_store = warp::any().map(move || store.clone());
     let with_incoming_handler = warp::any().map(move || incoming_handler.clone());
@@ -370,6 +371,7 @@ where
                     .await?;
 
                     println!("[MY_LOG DEBUG] {}:{}", file!(), line!()); debug!("Sent SPSP payment, receipt: {:?}", receipt);
+                    println!("[MY_LOG INSPECT] accounts_api().post_payments 'Sent SPSP payment, receipt: {:?} {}:{} ",receipt,file!(), line!());
                     Ok::<Json, Rejection>(warp::reply::json(&json!(receipt)))
                 }
             },

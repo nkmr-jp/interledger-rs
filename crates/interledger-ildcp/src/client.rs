@@ -27,5 +27,6 @@ where
         );
     })?;
     println!("[MY_LOG DEBUG] {}:{}", file!(), line!()); debug!("Got ILDCP response: {:?}", response);
+    println!("[MY_LOG INSPECT] get_ildcp_info() {}:{} " ,file!(), line!());
     Ok(response)
 }

@@ -47,6 +47,7 @@ pub async fn query_coincap(client: &Client) -> Result<HashMap<String, f64>, ()> 
             }
         })
         .collect();
+    println!("[MY_LOG INSPECT] query_coincap() {}:{} " ,file!(), line!());
     Ok(all_rates)
 }
 

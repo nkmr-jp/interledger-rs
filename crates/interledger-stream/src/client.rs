@@ -303,6 +303,7 @@ where
     A: Account + Send + Sync + 'static,
     S: ExchangeRateStore + Send + Sync + 'static,
 {
+    println!("[MY_LOG INSPECT] send_money() {}:{} ",file!(), line!());
     let shared_secret = Bytes::from(shared_secret);
 
     let from = from_account.ilp_address();
@@ -406,6 +407,7 @@ where
                     payment.fulfilled_packets,
                     payment.rejected_packets,
                 );
+                println!("[MY_LOG INSPECT] send_money().loop.match event.PaymentEvent::CloseConnection {}:{} ",file!(), line!());
                 return Ok(payment.receipt.clone());
             }
             PaymentEvent::Timeout => {

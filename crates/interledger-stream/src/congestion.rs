@@ -78,6 +78,7 @@ impl CongestionController {
                 "Prepare packet of {}, amount in flight is now: {}",
                 amount, self.amount_in_flight
             );
+            println!("[MY_LOG INSPECT] CongestionController.prepare() {}:{} ",file!(), line!());
         }
     }
 
@@ -101,6 +102,7 @@ impl CongestionController {
                 "Fulfilled packet of {}, doubling max in flight to: {}",
                 prepare_amount, self.max_in_flight
             );
+            println!("[MY_LOG INSPECT] CongestionController.fulfill() {}:{} ",file!(), line!());
         } else {
             // Add to the max in flight but don't exeed the u64 max value
             if u64::max_value() - self.increase_amount >= self.max_in_flight {
@@ -131,11 +133,13 @@ impl CongestionController {
                     1,
                 );
                 println!("[MY_LOG DEBUG] {}:{}", file!(), line!()); debug!("Rejected packet with T04 error. Amount in flight was: {}, decreasing max in flight to: {}", self.amount_in_flight + prepare_amount, self.max_in_flight);
+                println!("[MY_LOG INSPECT] CongestionController.reject().ErrorCode::T04_INSUFFICIENT_LIQUIDITY {}:{} ",file!(), line!());
 
                 #[cfg(feature = "metrics_csv")]
                 self.log_stats(0);
             }
             ErrorCode::F08_AMOUNT_TOO_LARGE => {
+                println!("[MY_LOG INSPECT] CongestionController.reject().ErrorCode::F08_AMOUNT_TOO_LARGE {}:{} ",file!(), line!());
                 if let Ok(details) = MaxPacketAmountDetails::from_bytes(reject.data()) {
                     let new_max_packet_amount: u64 =
                         prepare_amount * details.max_amount() / details.amount_received();

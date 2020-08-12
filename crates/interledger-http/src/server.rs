@@ -87,6 +87,7 @@ where
             Ok(fulfill) => fulfill.into(),
             Err(reject) => reject.into(),
         };
+        println!("[MY_LOG INSPECT] ilp_over_http() {}:{} " ,file!(), line!());
 
         Ok(warp::http::Response::builder()
             .header("Content-Type", "application/octet-stream")

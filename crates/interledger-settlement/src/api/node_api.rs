@@ -49,6 +49,7 @@ where
         + 'static,
     A: SettlementAccount + Account + Send + Sync + 'static,
 {
+    println!("[MY_LOG INSPECT] receive_settlement() {}:{} ",file!(), line!());
     let input = format!("{}{:?}", account_id, quantity);
     let input_hash = get_hash_of(input.as_ref());
 
@@ -90,6 +91,7 @@ where
     O: OutgoingService<A> + Clone + Send + Sync + 'static,
     A: SettlementAccount + Account + Send + Sync + 'static,
 {
+    println!("[MY_LOG INSPECT] send_message() {}:{} ",file!(), line!());
     let input = format!("{}{:?}", account_id, message);
     let input_hash = get_hash_of(input.as_ref());
 
