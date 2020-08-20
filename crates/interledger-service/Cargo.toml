@@ -24,6 +24,8 @@ unicode-normalization = { version = "0.1.8", default-features = false }
 uuid = { version = "0.8.1", default-features = false}
 async-trait = { version = "0.1.22", default-features = false }
 
+tracing = { version = "0.1.12", default-features = false, features = ["log"] }
+
 #trace feature
 tracing-futures = { version = "0.2.1", default-features = false, features = ["std", "futures-03"], optional = true }
 

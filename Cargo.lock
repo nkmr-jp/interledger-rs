@@ -1204,6 +1204,7 @@ dependencies = [
  "regex",
  "serde",
  "serde_json",
+ "tracing",
  "tracing-futures",
  "unicase",
  "unicode-normalization",
