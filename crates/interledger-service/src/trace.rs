@@ -13,7 +13,7 @@ where
     async fn handle_request(&mut self, request: IncomingRequest<A>) -> IlpResult {
         // println!("[MY_LOG INSPECT] IncomingService.handle_request() request.prepare.destination: {:?} {}:{} ",request.prepare.destination(), file!(), line!());
         // info!("[MY_LOG INSPECT FLOW] IncomingService.handle_request() request.prepare.destination: {:?} {}:{} ",request.prepare.destination(), file!(), line!());
-        info!("[MY_LOG INSPECT FLOW] IncomingService.handle_request() request {:?} {}:{} ",request, file!(), line!());
+        info!("[MY_LOG INSPECT FLOW] IncomingService.handle_request() request.prepare {:?} {}:{} ",request.prepare, file!(), line!());
         self.inner_mut()
             .handle_request(request)
             .in_current_span()
@@ -29,7 +29,8 @@ where
 {
     async fn send_request(&mut self, request: OutgoingRequest<A>) -> IlpResult {
         // println!("[MY_LOG INSPECT] OutgoingService.send_request() request.prepare.destination: {:?} {}:{} ",request.prepare.destination(), file!(), line!());
-        info!("[MY_LOG INSPECT FLOW] OutgoingService.send_request() request: {:?} {}:{} ",request, file!(), line!());
+        // info!("[MY_LOG INSPECT FLOW] OutgoingService.send_request() request.prepare: {:?} {}:{} ",request.prepare, file!(), line!());
+        info!("[MY_LOG INSPECT FLOW] OutgoingService.send_request() request.prepare {:?} {}:{} " ,request.prepare, file!(), line!());
         self.inner_mut()
             .send_request(request)
             .in_current_span()
