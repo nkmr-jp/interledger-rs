@@ -35,7 +35,7 @@ pub fn run(matches: &ArgMatches) -> Result<Response, Error> {
         client: Client::new(),
         url: matches.value_of("node_url").unwrap(), // infallible unwrap
     };
-    println!("[MY_LOG INSPECT] run() {}:{} ", file!(), line!());
+    // println!("[MY_LOG INSPECT] run() {}:{} ", file!(), line!());
 
     // Dispatch based on parsed input
     match matches.subcommand() {

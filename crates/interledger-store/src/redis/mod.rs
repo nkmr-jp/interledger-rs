@@ -356,6 +356,7 @@ impl RedisStore {
         &self,
         encrypted: &AccountWithEncryptedTokens,
     ) -> Result<(), NodeStoreError> {
+        println!("[MY_LOG INSPECT FLOW] RedisStore.redis_insert_account() {}:{} ", file!(), line!());
         let account = &encrypted.account;
         let id = accounts_key(account.id);
         let mut connection = self.connection.clone();
@@ -439,6 +440,7 @@ impl RedisStore {
         &self,
         encrypted: &AccountWithEncryptedTokens,
     ) -> Result<(), NodeStoreError> {
+        println!("[MY_LOG INSPECT FLOW] RedisStore.redis_update_account() {}:{} ", file!(), line!());
         let account = encrypted.account.clone();
         let mut connection = self.connection.clone();
         let routing_table = self.routes.clone();
@@ -509,6 +511,7 @@ impl RedisStore {
         id: Uuid,
         settings: EncryptedAccountSettings,
     ) -> Result<AccountWithEncryptedTokens, NodeStoreError> {
+        println!("[MY_LOG INSPECT FLOW] RedisStore.redis_modify_account() {}:{} ", file!(), line!());
         let mut pipe = redis_crate::pipe();
         pipe.atomic();
 
@@ -577,6 +580,7 @@ impl RedisStore {
         &self,
         id: Uuid,
     ) -> Result<AccountWithEncryptedTokens, NodeStoreError> {
+        println!("[MY_LOG INSPECT FLOW] RedisStore.redis_update_account() {}:{} ", file!(), line!());
         let mut accounts: Vec<AccountWithEncryptedTokens> = LOAD_ACCOUNTS
             .arg(RedisAccountId(id))
             .invoke_async(&mut self.connection.clone())
@@ -592,6 +596,7 @@ impl RedisStore {
         &self,
         id: Uuid,
     ) -> Result<AccountWithEncryptedTokens, NodeStoreError> {
+        println!("[MY_LOG INSPECT FLOW] RedisStore.redis_delete_account() {}:{} ", file!(), line!());
         let encrypted = self.redis_get_account(id).await?;
         let account = &encrypted.account;
         let mut pipe = redis_crate::pipe();
@@ -669,6 +674,7 @@ impl AccountStore for RedisStore {
         &self,
         username: &Username,
     ) -> Result<Uuid, AccountStoreError> {
+        println!("[MY_LOG INSPECT FLOW] RedisStore.get_account_id_from_username() {}:{} ", file!(), line!());
         let username = username.clone();
         let id: Option<RedisAccountId> = self
             .connection
@@ -694,10 +700,12 @@ impl StreamNotificationsStore for RedisStore {
         sender: UnboundedSender<PaymentNotification>,
     ) {
         println!("[MY_LOG TRACE] {}:{}", file!(), line!()); trace!("Added payment notification listener for {}", id);
+        println!("[MY_LOG INSPECT FLOW] StreamNotificationsStore.add_payment_notification_subscription() {}:{} ", file!(), line!());
         self.subscriptions.write().insert(id, sender);
     }
 
     fn publish_payment_notification(&self, payment: PaymentNotification) {
+        println!("[MY_LOG INSPECT FLOW] StreamNotificationsStore.publish_payment_notification() {}:{} ", file!(), line!());
         let username = payment.to_username.clone();
         let message = serde_json::to_string(&payment).unwrap();
         let mut connection = self.connection.clone();
@@ -740,6 +748,7 @@ impl BalanceStore for RedisStore {
     /// Returns the balance **from the account holder's perspective**, meaning the sum of
     /// the Payable Balance and Pending Outgoing minus the Receivable Balance and the Pending Incoming.
     async fn get_balance(&self, account_id: Uuid) -> Result<i64, BalanceStoreError> {
+        println!("[MY_LOG INSPECT FLOW] BalanceStore.get_balance() {}:{} ", file!(), line!());
         let values: Vec<i64> = self
             .connection
             .clone()
@@ -771,7 +780,8 @@ impl BalanceStore for RedisStore {
             "Processed prepare with incoming amount: {}. Account {} has balance (including prepaid amount): {} ",
             incoming_amount, from_account_id, balance
         );
-        println!("[MY_LOG INSPECT] BalanceStore.update_balances_for_prepare() {}:{} " ,file!(), line!());
+        // println!("[MY_LOG INSPECT] BalanceStore.update_balances_for_prepare() {}:{} " ,file!(), line!());
+        println!("[MY_LOG INSPECT FLOW] BalanceStore.update_balances_for_prepare() {}:{} ", file!(), line!());
         Ok(())
     }
 
@@ -793,7 +803,8 @@ impl BalanceStore for RedisStore {
             balance,
             amount_to_settle,
         );
-        println!("[MY_LOG INSPECT] BalanceStore.update_balances_for_fulfill() {}:{} " ,file!(), line!());
+        // println!("[MY_LOG INSPECT] BalanceStore.update_balances_for_fulfill() {}:{} " ,file!(), line!());
+        println!("[MY_LOG INSPECT FLOW] BalanceStore.update_balances_for_fulfill() {}:{} " ,file!(), line!());
         Ok((balance, amount_to_settle))
     }
 
@@ -816,7 +827,8 @@ impl BalanceStore for RedisStore {
             "Processed reject for incoming amount: {}. Account {} has balance (including prepaid amount): {}",
             incoming_amount, from_account_id, balance
         );
-        println!("[MY_LOG INSPECT] BalanceStore.update_balances_for_reject() {}:{} " ,file!(), line!());
+        // println!("[MY_LOG INSPECT] BalanceStore.update_balances_for_reject() {}:{} " ,file!(), line!());
+        println!("[MY_LOG INSPECT FLOW] BalanceStore.update_balances_for_reject() {}:{} " ,file!(), line!());
 
         Ok(())
     }
@@ -922,6 +934,7 @@ impl HttpStore for RedisStore {
         username: &Username,
         token: &str,
     ) -> Result<Self::Account, HttpStoreError> {
+        println!("[MY_LOG INSPECT FLOW] HttpStore.get_account_from_http_auth() {}:{} " ,file!(), line!());
         // TODO make sure it can't do script injection!
         let account: Option<AccountWithEncryptedTokens> = ACCOUNT_FROM_USERNAME
             .arg(username.as_ref())
@@ -973,7 +986,8 @@ impl NodeStore for RedisStore {
             .encrypt_tokens(&self.encryption_key.expose_secret().0);
 
         self.redis_insert_account(&encrypted).await?;
-        println!("[MY_LOG INSPECT] NodeStore.insert_account() {}:{} " ,file!(), line!());
+        // println!("[MY_LOG INSPECT] NodeStore.insert_account() {}:{} " ,file!(), line!());
+        println!("[MY_LOG INSPECT FLOW] NodeStore.insert_account() {}:{} " ,file!(), line!());
         Ok(account)
     }
 
@@ -999,7 +1013,8 @@ impl NodeStore for RedisStore {
             .encrypt_tokens(&self.encryption_key.expose_secret().0);
 
         self.redis_update_account(&encrypted).await?;
-        println!("[MY_LOG INSPECT] NodeStore.update_account() {}:{} " ,file!(), line!());
+        // println!("[MY_LOG INSPECT] NodeStore.update_account() {}:{} " ,file!(), line!());
+        println!("[MY_LOG INSPECT FLOW] NodeStore.update_account() {}:{} " ,file!(), line!());
         Ok(account)
     }
 
@@ -1008,6 +1023,7 @@ impl NodeStore for RedisStore {
         id: Uuid,
         settings: AccountSettings,
     ) -> Result<Self::Account, NodeStoreError> {
+        println!("[MY_LOG INSPECT FLOW] NodeStore.modify_account_settings() {}:{} " ,file!(), line!());
         let settings = EncryptedAccountSettings {
             settle_to: settings.settle_to,
             settle_threshold: settings.settle_threshold,
@@ -1049,6 +1065,7 @@ impl NodeStore for RedisStore {
 
     // TODO limit the number of results and page through them
     async fn get_all_accounts(&self) -> Result<Vec<Self::Account>, NodeStoreError> {
+        println!("[MY_LOG INSPECT FLOW] NodeStore.get_all_accounts() {}:{} " ,file!(), line!());
         let mut connection = self.connection.clone();
 
         let account_ids = self.get_all_accounts_ids().await?;
@@ -1074,6 +1091,7 @@ impl NodeStore for RedisStore {
     where
         R: IntoIterator<Item = (String, Uuid)> + Send + 'async_trait,
     {
+        println!("[MY_LOG INSPECT FLOW] NodeStore.set_static_routes() {}:{} " ,file!(), line!());
         let mut connection = self.connection.clone();
         let routes: Vec<(String, RedisAccountId)> = routes
             .into_iter()
@@ -1114,6 +1132,7 @@ impl NodeStore for RedisStore {
         prefix: String,
         account_id: Uuid,
     ) -> Result<(), NodeStoreError> {
+        println!("[MY_LOG INSPECT FLOW] NodeStore.set_static_route() {}:{} " ,file!(), line!());
         let routing_table = self.routes.clone();
         let mut connection = self.connection.clone();
 
@@ -1152,7 +1171,8 @@ impl NodeStore for RedisStore {
             .set(DEFAULT_ROUTE_KEY, RedisAccountId(account_id))
             .await?;
         println!("[MY_LOG DEBUG] {}:{}", file!(), line!()); debug!("Set default route to account id: {}", account_id);
-        println!("[MY_LOG INSPECT] NodeStore.set_default_route() {}:{} " ,file!(), line!());
+        // println!("[MY_LOG INSPECT] NodeStore.set_default_route() {}:{} " ,file!(), line!());
+        println!("[MY_LOG INSPECT FLOW] NodeStore.set_default_route() {}:{} " ,file!(), line!());
         update_routes(connection, routing_table).await?;
         Ok(())
     }
@@ -1167,7 +1187,8 @@ impl NodeStore for RedisStore {
             .map(|(asset_code, url)| (asset_code, url.to_string()))
             .collect();
         println!("[MY_LOG DEBUG] {}:{}", file!(), line!()); debug!("Setting settlement engines to {:?}", asset_to_url_map);
-        println!("[MY_LOG INSPECT] NodeStore.set_settlement_engines() {}:{} " ,file!(), line!());
+        // println!("[MY_LOG INSPECT] NodeStore.set_settlement_engines() {}:{} " ,file!(), line!());
+        println!("[MY_LOG INSPECT FLOW] NodeStore.set_default_route() {}:{} " ,file!(), line!());
         connection
             .hset_multiple(SETTLEMENT_ENGINES_KEY, &asset_to_url_map)
             .await?;
@@ -1178,6 +1199,7 @@ impl NodeStore for RedisStore {
         &self,
         asset_code: &str,
     ) -> Result<Option<Url>, NodeStoreError> {
+        println!("[MY_LOG INSPECT FLOW] NodeStore.get_asset_settlement_engine() {}:{} " ,file!(), line!());
         let url: Option<String> = self
             .connection
             .clone()
@@ -1206,7 +1228,8 @@ impl AddressStore for RedisStore {
     // updates their ILP Address to match the new address.
     async fn set_ilp_address(&self, ilp_address: Address) -> Result<(), AddressStoreError> {
         println!("[MY_LOG DEBUG] {}:{}", file!(), line!()); debug!("Setting ILP address to: {}", ilp_address);
-        println!("[MY_LOG INSPECT] AddressStore.set_ilp_address() {}:{} " ,file!(), line!());
+        // println!("[MY_LOG INSPECT] AddressStore.set_ilp_address() {}:{} " ,file!(), line!());
+        println!("[MY_LOG INSPECT FLOW] AddressStore.set_ilp_address() {}:{} " ,file!(), line!());
         let routing_table = self.routes.clone();
         let mut connection = self.connection.clone();
 
@@ -1390,7 +1413,8 @@ impl CcpRoutingStore for RedisStore {
 
         pipe.query_async(&mut connection).await?;
         println!("[MY_LOG TRACE] {}:{}", file!(), line!()); trace!("Saved {} routes to Redis", num_routes);
-        println!("[MY_LOG INSPECT] NodeStore.set_routes() {}:{} " ,file!(), line!());
+        // println!("[MY_LOG INSPECT] NodeStore.set_routes() {}:{} " ,file!(), line!());
+        println!("[MY_LOG INSPECT FLOW] NodeStore.set_routes() {}:{} " ,file!(), line!());
 
         update_routes(connection, self.routes.clone()).await?;
         Ok(())
@@ -1495,6 +1519,7 @@ impl IdempotentStore for RedisStore {
         &self,
         idempotency_key: String,
     ) -> Result<Option<IdempotentData>, IdempotentStoreError> {
+        println!("[MY_LOG INSPECT FLOW] IdempotentStore.load_idempotent_data() {}:{} " ,file!(), line!());
         let mut connection = self.connection.clone();
         let ret: HashMap<String, String> = connection
             .hgetall(prefixed_idempotency_key(&idempotency_key))
@@ -1525,6 +1550,7 @@ impl IdempotentStore for RedisStore {
         status_code: StatusCode,
         data: Bytes,
     ) -> Result<(), IdempotentStoreError> {
+        println!("[MY_LOG INSPECT FLOW] IdempotentStore.save_idempotent_data() {}:{} " ,file!(), line!());
         let mut pipe = redis_crate::pipe();
         let mut connection = self.connection.clone();
         pipe.atomic()
@@ -1574,7 +1600,8 @@ impl SettlementStore for RedisStore {
             amount,
             balance
         );
-        println!("[MY_LOG INSPECT] SettlementStore.update_balance_for_incoming_settlement() {}:{} " ,file!(), line!());
+        // println!("[MY_LOG INSPECT] SettlementStore.update_balance_for_incoming_settlement() {}:{} " ,file!(), line!());
+        println!("[MY_LOG INSPECT FLOW] SettlementStore.update_balance_for_incoming_settlement() {}:{} " ,file!(), line!());
         Ok(())
     }
 
@@ -1600,7 +1627,8 @@ impl SettlementStore for RedisStore {
             settle_amount,
             balance
         );
-        println!("[MY_LOG INSPECT] SettlementStore.refund_settlement() {}:{} " ,file!(), line!());
+        // println!("[MY_LOG INSPECT] SettlementStore.refund_settlement() {}:{} " ,file!(), line!());
+        println!("[MY_LOG INSPECT FLOW] SettlementStore.refund_settlement() {}:{} " ,file!(), line!());
         Ok(())
     }
 }
@@ -1824,7 +1852,8 @@ async fn update_routes(
     );
     // TODO we may not want to print this because the routing table will be very big
     // if the node has a lot of local accounts
-    println!("[MY_LOG TRACE] {}:{}", file!(), line!()); trace!("Routing table is: {:?}", routes);
+    // println!("[MY_LOG TRACE] {}:{}", file!(), line!()); trace!("Routing table is: {:?}", routes);
+    println!("[MY_LOG INSPECT FLOW] update_routes() {}:{} " ,file!(), line!());
     *routing_table.write() = Arc::new(routes);
     Ok(())
 }
