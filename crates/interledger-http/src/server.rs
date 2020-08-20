@@ -7,7 +7,7 @@ use interledger_service::{IncomingRequest, IncomingService};
 use secrecy::{ExposeSecret, SecretString};
 use std::convert::TryFrom;
 use std::net::SocketAddr;
-use tracing::{info, error};
+use tracing::error;
 use warp::{Filter, Rejection};
 
 /// Max message size that is allowed to transfer from a request or a message.
@@ -76,24 +76,18 @@ where
 
     let buffer = bytes::BytesMut::from(body.as_ref());
     if let Ok(prepare) = Prepare::try_from(buffer) {
-        let request = IncomingRequest {
-            from: account,
-            prepare,
-        };
-        info!("[MY_LOG INSPECT FLOW] ilp_over_http() {}:{} " ,file!(), line!());
-        info!("[MY_LOG INSPECT FLOW] IncomingRequest: {:?}", request);
         let result = incoming
-            .handle_request(request)
+            .handle_request(IncomingRequest {
+                from: account,
+                prepare,
+            })
             .await;
 
         let bytes: BytesMut = match result {
             Ok(fulfill) => fulfill.into(),
             Err(reject) => reject.into(),
         };
-        info!("[MY_LOG INSPECT FLOW] Response");
-        info!("[MY_LOG INSPECT FLOW] header Content-Type: {:?}", "application/octet-stream");
-        info!("[MY_LOG INSPECT FLOW] status: {:?}",200);
-        info!("[MY_LOG INSPECT FLOW] body: {:?}", bytes);
+        println!("[MY_LOG INSPECT] ilp_over_http() {}:{} " ,file!(), line!());
 
         Ok(warp::http::Response::builder()
             .header("Content-Type", "application/octet-stream")
