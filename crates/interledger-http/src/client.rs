@@ -10,7 +10,7 @@ use reqwest::{
 };
 use secrecy::{ExposeSecret, SecretString};
 use std::{convert::TryFrom, iter::FromIterator, marker::PhantomData, sync::Arc, time::Duration};
-use tracing::{info, error, trace};
+use tracing::{error, trace};
 
 /// The HttpClientService implements [OutgoingService](../../interledger_service/trait.OutgoingService)
 /// for sending ILP Prepare packets over to the HTTP URL associated with the provided account
@@ -76,13 +76,7 @@ where
                 request.to.id(),
                 url.as_str()
             );
-            // println!("[MY_LOG INSPECT] send_request() {}:{} " ,file!(), line!());
-            info!(
-                "[MY_LOG INSPECT FLOW] OutgoingService.send_request() to account: {} (URL: {}) {}:{}",
-                request.to.id(),
-                url.as_str(),
-                file!(), line!()
-            );
+            println!("[MY_LOG INSPECT] send_request() {}:{} " ,file!(), line!());
             let token = request
                 .to
                 .get_http_auth_token()
