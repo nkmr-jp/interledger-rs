@@ -12,10 +12,13 @@ use serde::de::DeserializeOwned;
 use url::Url;
 use warp::{self, Filter, Rejection};
 
+mod json_logger;
+
 /// [ILP over HTTP](https://interledger.org/rfcs/0035-ilp-over-http/) Outgoing Service
 mod client;
 /// [ILP over HTTP](https://interledger.org/rfcs/0035-ilp-over-http/) API (implemented with [Warp](https://docs.rs/warp/0.2.0/warp/))
 mod server;
+
 
 pub use self::client::HttpClientService;
 pub use self::server::HttpServer;
@@ -167,3 +170,10 @@ mod tests {
         );
     }
 }
+
+
+// JSON_LOG for Inspect
+// #[macro_use]
+// extern crate slog;
+// extern crate slog_async;
+// extern crate slog_json;

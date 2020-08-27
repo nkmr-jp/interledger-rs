@@ -12,6 +12,10 @@ use secrecy::{ExposeSecret, SecretString};
 use std::{convert::TryFrom, iter::FromIterator, marker::PhantomData, sync::Arc, time::Duration};
 use tracing::{error, trace};
 
+use crate::json_logger::LOGGING;
+use slog::{info as sinfo};
+
+
 /// The HttpClientService implements [OutgoingService](../../interledger_service/trait.OutgoingService)
 /// for sending ILP Prepare packets over to the HTTP URL associated with the provided account
 /// If no [ILP-over-HTTP](https://interledger.org/rfcs/0035-ilp-over-http) URL is specified for
@@ -70,6 +74,7 @@ where
         let ilp_address = self.store.get_ilp_address();
         let ilp_address_clone = ilp_address.clone();
         let self_clone = self.clone();
+
         if let Some(url) = request.to.get_http_url() {
             trace!(
                 "Sending outgoing ILP over HTTP packet to account: {} (URL: {})",
@@ -82,6 +87,13 @@ where
                 .unwrap_or_else(|| SecretString::new("".to_owned()));
             let header = format!("Bearer {}", token.expose_secret());
             let body = request.prepare.as_ref().to_owned();
+
+            sinfo!(&LOGGING.logger, "ilp request message";
+                "url" => format!("{:?}", url),
+                "request" => format!("{:?}", request),
+                "body" => format!("{:?}", body),
+            );
+
             let resp = self_clone
                 .client
                 .post(url.as_ref())
@@ -107,7 +119,9 @@ where
                     .build()
                 })
                 .await?;
-            parse_packet_from_response(resp, ilp_address_clone).await
+            let ilp_result = parse_packet_from_response(resp, ilp_address_clone).await;
+            sinfo!(&LOGGING.logger, "ilp response message"; "ilp_result" => format!("{:?}", ilp_result));
+            ilp_result
         } else {
             self.next.send_request(request).await
         }
