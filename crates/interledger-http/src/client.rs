@@ -88,10 +88,17 @@ where
             let header = format!("Bearer {}", token.expose_secret());
             let body = request.prepare.as_ref().to_owned();
 
-            sinfo!(&LOGGING.logger, "ilp request message";
-                "url" => format!("{:?}", url),
-                "request" => format!("{:?}", request),
-                "body" => format!("{:?}", body),
+            // let debug_request_id =
+            sinfo!(&LOGGING.logger, "ILP_REQUEST_MESSAGE_HTTP";
+                "HttpRequest_url" => format!("{:?}", url),
+                "HttpRequest_header_authorization" => format!("{:?}", &header),
+                "HttpRequest_body" => format!("{:?}", body),
+            );
+            sinfo!(&LOGGING.logger, "ILP_REQUEST_MESSAGE_PACKET";
+                "OutgoingRequest_from" => format!("{:?}", request.from),
+                "OutgoingRequest_to" => format!("{:?}", request.to),
+                "OutgoingRequest_original_amount" => format!("{:?}", request.original_amount),
+                "OutgoingRequest_prepare" => format!("{:?}", request.prepare),
             );
 
             let resp = self_clone
@@ -119,8 +126,14 @@ where
                     .build()
                 })
                 .await?;
+
+            sinfo!(&LOGGING.logger, "ILP_RESPONSE_MESSAGE_HTTP";
+                "HttpResponse" => format!("{:?}", resp),
+            );
             let ilp_result = parse_packet_from_response(resp, ilp_address_clone).await;
-            sinfo!(&LOGGING.logger, "ilp response message"; "ilp_result" => format!("{:?}", ilp_result));
+            sinfo!(&LOGGING.logger, "ILP_RESPONSE_MESSAGE_PACKET";
+                "IlpResult" => format!("{:?}", ilp_result)
+            );
             ilp_result
         } else {
             self.next.send_request(request).await

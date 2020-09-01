@@ -9,7 +9,8 @@ pub struct Logging {
 }
 
 pub static LOGGING: Lazy<Logging> = Lazy::new(|| {
-    let logfile = "../../logs/ilp-node.log";
+    let pid=std::process::id().to_string();
+    let logfile = format!("../../json_logs/ilp-node-{}.log", pid);
     let file = OpenOptions::new()
         .create(true)
         .write(true)
