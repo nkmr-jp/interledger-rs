@@ -22,14 +22,14 @@ pub static LOGGING: Lazy<Logging> = Lazy::new(|| {
         .set_pretty(false)
         .add_default_keys()
         .add_key_value(o!(
-                "pid" => FnValue(move |_|{std::process::id().to_string()})
+                "pid" => pid
                 ))
         .build()
         .fuse();
     let applogger = Logger::root(
         Mutex::new(drain).fuse(),
         o!("location" => PushFnValue(|r: &Record, ser: PushFnValueSerializer| {
-            ser.emit(format_args!("{}:{}", r.file(), r.line()))
+            ser.emit(format_args!("https://github.com/nkmr-jp/interledger-rs/blob/mylog2/{}#L{}", r.file(), r.line()))
         })),
     );
 

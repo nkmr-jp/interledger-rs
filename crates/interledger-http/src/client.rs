@@ -14,6 +14,7 @@ use tracing::{error, trace};
 
 use crate::json_logger::LOGGING;
 use slog::{info as sinfo};
+use chrono;
 
 
 /// The HttpClientService implements [OutgoingService](../../interledger_service/trait.OutgoingService)
@@ -88,25 +89,27 @@ where
             let header = format!("Bearer {}", token.expose_secret());
             let body = request.prepare.as_ref().to_owned();
 
-            // let debug_request_id =
+            let request_id = chrono::Local::now().timestamp_nanos(); // debug param
+            let http_request = self_clone
+                .client
+                .post(url.as_ref())
+                .header("authorization", &header)
+                .header("request_id", request_id)
+                .body(body);
+
             sinfo!(&LOGGING.logger, "ILP_REQUEST_MESSAGE_HTTP";
-                "HttpRequest_url" => format!("{:?}", url),
-                "HttpRequest_header_authorization" => format!("{:?}", &header),
-                "HttpRequest_body" => format!("{:?}", body),
+                "request_id" => format!("{:?}", request_id),
+                "HttpRequest" => format!("{:?}", http_request),
             );
             sinfo!(&LOGGING.logger, "ILP_REQUEST_MESSAGE_PACKET";
+                "request_id" => format!("{:?}", request_id),
                 "OutgoingRequest_from" => format!("{:?}", request.from),
                 "OutgoingRequest_to" => format!("{:?}", request.to),
                 "OutgoingRequest_original_amount" => format!("{:?}", request.original_amount),
                 "OutgoingRequest_prepare" => format!("{:?}", request.prepare),
             );
 
-            let resp = self_clone
-                .client
-                .post(url.as_ref())
-                .header("authorization", &header)
-                .body(body)
-                .send()
+            let resp = http_request.send()
                 .map_err(move |err| {
                     error!("Error sending HTTP request: {:?}", err);
                     let mut code = ErrorCode::T01_PEER_UNREACHABLE;
@@ -128,11 +131,13 @@ where
                 .await?;
 
             sinfo!(&LOGGING.logger, "ILP_RESPONSE_MESSAGE_HTTP";
+                "request_id" => format!("{:?}", request_id),
                 "HttpResponse" => format!("{:?}", resp),
             );
             let ilp_result = parse_packet_from_response(resp, ilp_address_clone).await;
             sinfo!(&LOGGING.logger, "ILP_RESPONSE_MESSAGE_PACKET";
-                "IlpResult" => format!("{:?}", ilp_result)
+                "request_id" => format!("{:?}", request_id),
+                "IlpResult" => format!("{:?}", ilp_result),
             );
             ilp_result
         } else {
