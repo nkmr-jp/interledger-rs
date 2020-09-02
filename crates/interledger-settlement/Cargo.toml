@@ -33,6 +33,12 @@ redis_crate = { package = "redis", version = "0.15.1", default-features = false,
 async-trait = { version = "0.1.22", default-features = false }
 futures-retry = { version = "0.4.0", default-features = false }
 
+json-logger = { path = "../json-logger", version = "0.1.0", default-features = false }
+slog = "2.5.2"
+slog-json = "2.3.0"
+slog-async = "2.5.0"
+chrono = "0.4"
+
 [dev-dependencies]
 parking_lot = { version = "0.10.0", default-features = false }
 mockito = { version = "0.23.1", default-features = false }

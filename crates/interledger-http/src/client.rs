@@ -91,14 +91,16 @@ where
 
             let request_id = chrono::Local::now().timestamp_nanos(); // debug param
 
-            sinfo!(&LOGGING.logger, "ILP_REQUEST_MESSAGE_HTTP";
+            sinfo!(&LOGGING.logger, "ILP_REQUEST_HTTP";
                 "request_id" => format!("{:?}", request_id),
+                "function" => "OutgoingService.send_request()",
                 "HttpRequest_url" => format!("{:?}", url),
                 "HttpRequest_header_authorization" => format!("{:?}", &header),
                 "HttpRequest_body" => format!("{:?}", body),
             );
-            sinfo!(&LOGGING.logger, "ILP_REQUEST_MESSAGE_PACKET";
+            sinfo!(&LOGGING.logger, "ILP_REQUEST_PACKET";
                 "request_id" => format!("{:?}", request_id),
+                "function" => "OutgoingService.send_request()",
                 "OutgoingRequest_from" => format!("{:?}", request.from),
                 "OutgoingRequest_to" => format!("{:?}", request.to),
                 "OutgoingRequest_original_amount" => format!("{:?}", request.original_amount),
@@ -131,13 +133,15 @@ where
                 })
                 .await?;
 
-            sinfo!(&LOGGING.logger, "ILP_RESPONSE_MESSAGE_HTTP";
+            sinfo!(&LOGGING.logger, "ILP_RESPONSE_HTTP";
                 "request_id" => format!("{:?}", request_id),
+                "function" => "OutgoingService.send_request()",
                 "HttpResponse" => format!("{:?}", resp),
             );
             let ilp_result = parse_packet_from_response(resp, ilp_address_clone).await;
-            sinfo!(&LOGGING.logger, "ILP_RESPONSE_MESSAGE_PACKET";
+            sinfo!(&LOGGING.logger, "ILP_RESPONSE_PACKET";
                 "request_id" => format!("{:?}", request_id),
+                "function" => "OutgoingService.send_request()",
                 "IlpResult" => format!("{:?}", ilp_result),
             );
             ilp_result

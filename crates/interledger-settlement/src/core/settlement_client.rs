@@ -7,6 +7,10 @@ use tracing::{debug, trace};
 use url::Url;
 use uuid::Uuid;
 
+use json_logger::LOGGING;
+use slog::{info as sinfo};
+use chrono;
+
 type Response = Result<reqwest::Response, reqwest::Error>;
 
 // The account creation endpoint set by the engines in the [RFC](https://github.com/interledger/rfcs/pull/536)
@@ -137,13 +141,31 @@ impl SettlementClient {
         let idempotency_uuid = Uuid::new_v4().to_hyphenated().to_string();
 
         // Make the POST request future
+
+        let request_id = chrono::Local::now().timestamp_nanos(); // debug param
+        let body = &json!(Quantity::new(amount, asset_scale));
+        sinfo!(&LOGGING.logger, "SETTLEMENT_REQUEST";
+                "request_id" => format!("{:?}", request_id),
+                "function" => "SettlementClient.send_settlement_once()",
+                "HttpRequest_url" => format!("{:?}", settlement_engine_url.as_ref()),
+                "HttpRequest_header_Idempotency-Key" => format!("{:?}", idempotency_uuid),
+                "HttpRequest_body" => format!("{:?}", body),
+            );
+
         let response = self
             .client
             .post(settlement_engine_url.as_ref())
             .header("Idempotency-Key", idempotency_uuid)
-            .json(&json!(Quantity::new(amount, asset_scale)))
+            .header("request_id", request_id)
+            .json(body)
             .send()
             .await?;
+
+        sinfo!(&LOGGING.logger, "SETTLEMENT_RESPONSE";
+                "request_id" => format!("{:?}", request_id),
+                "function" => "SettlementClient.send_settlement_once()",
+                "HttpResponse" => format!("{:?}", response),
+            );
 
         Ok(response.error_for_status()?)
     }
