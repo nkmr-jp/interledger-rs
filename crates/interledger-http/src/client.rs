@@ -90,16 +90,12 @@ where
             let body = request.prepare.as_ref().to_owned();
 
             let request_id = chrono::Local::now().timestamp_nanos(); // debug param
-            let http_request = self_clone
-                .client
-                .post(url.as_ref())
-                .header("authorization", &header)
-                .header("request_id", request_id)
-                .body(body);
 
             sinfo!(&LOGGING.logger, "ILP_REQUEST_MESSAGE_HTTP";
                 "request_id" => format!("{:?}", request_id),
-                "HttpRequest" => format!("{:?}", http_request),
+                "HttpRequest_url" => format!("{:?}", url),
+                "HttpRequest_header_authorization" => format!("{:?}", &header),
+                "HttpRequest_body" => format!("{:?}", body),
             );
             sinfo!(&LOGGING.logger, "ILP_REQUEST_MESSAGE_PACKET";
                 "request_id" => format!("{:?}", request_id),
@@ -109,7 +105,12 @@ where
                 "OutgoingRequest_prepare" => format!("{:?}", request.prepare),
             );
 
-            let resp = http_request.send()
+            let resp = self_clone.client
+                .post(url.as_ref())
+                .header("authorization", &header)
+                .header("request_id", request_id)
+                .body(body)
+                .send()
                 .map_err(move |err| {
                     error!("Error sending HTTP request: {:?}", err);
                     let mut code = ErrorCode::T01_PEER_UNREACHABLE;
