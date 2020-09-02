@@ -1,0 +1,14 @@
+[package]
+name = "json-logger"
+version = "0.1.0"
+authors = ["nkmr-jp <nkmr.git@gmail.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+once_cell = { version = "1.3.1", default-features = false }
+slog = "2.5.2"
+slog-json = "2.3.0"
+slog-async = "2.5.0"
+chrono = "0.4"

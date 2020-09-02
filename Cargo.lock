@@ -1116,6 +1116,7 @@ dependencies = [
  "interledger-errors",
  "interledger-packet",
  "interledger-service",
+ "json-logger",
  "mime",
  "once_cell",
  "reqwest",
@@ -1399,6 +1400,17 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6a27d435371a2fa5b6d2b028a74bbdb1234f308da363226a2854ca3ff8ba7055"
 dependencies = [
  "wasm-bindgen",
+]
+
+[[package]]
+name = "json-logger"
+version = "0.1.0"
+dependencies = [
+ "chrono",
+ "once_cell",
+ "slog",
+ "slog-async",
+ "slog-json",
 ]
 
 [[package]]

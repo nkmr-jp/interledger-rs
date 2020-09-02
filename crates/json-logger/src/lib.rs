@@ -32,6 +32,14 @@ pub static LOGGING: Lazy<Logging> = Lazy::new(|| {
             ser.emit(format_args!("https://github.com/nkmr-jp/interledger-rs/blob/mylog2/{}#L{}", r.file(), r.line()))
         })),
     );
-
+    println!("json_logger initialized");
     Logging { logger: applogger }
 });
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn it_works() {
+        assert_eq!(2 + 2, 4);
+    }
+}

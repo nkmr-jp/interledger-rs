@@ -12,7 +12,7 @@ use secrecy::{ExposeSecret, SecretString};
 use std::{convert::TryFrom, iter::FromIterator, marker::PhantomData, sync::Arc, time::Duration};
 use tracing::{error, trace};
 
-use crate::json_logger::LOGGING;
+use json_logger::LOGGING;
 use slog::{info as sinfo};
 use chrono;
 
