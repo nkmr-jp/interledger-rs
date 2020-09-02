@@ -3,6 +3,9 @@ use slog::{PushFnValue, *};
 use std::fs::OpenOptions;
 use std::sync::Mutex;
 
+// refs: https://rust.graystorm.com/tag/crate-slog/
+// refs: https://github.com/slog-rs/slog/issues/123
+
 #[derive(Debug)]
 pub struct Logging {
     pub logger: slog::Logger,
@@ -26,11 +29,17 @@ pub static LOGGING: Lazy<Logging> = Lazy::new(|| {
                 ))
         .build()
         .fuse();
+
+    let module = PushFnValue(|r: &Record, ser: PushFnValueSerializer| {
+        ser.emit(format_args!("{}", r.module()))
+    });
+    let location = PushFnValue(|r: &Record, ser: PushFnValueSerializer| {
+        ser.emit(format_args!("https://github.com/nkmr-jp/interledger-rs/blob/mylog2/{}#L{}", r.file(), r.line()))
+    });
+
     let applogger = Logger::root(
         Mutex::new(drain).fuse(),
-        o!("location" => PushFnValue(|r: &Record, ser: PushFnValueSerializer| {
-            ser.emit(format_args!("https://github.com/nkmr-jp/interledger-rs/blob/mylog2/{}#L{}", r.file(), r.line()))
-        })),
+        o!("module" => module,"location" => location,),
     );
     println!("json_logger initialized");
     Logging { logger: applogger }
