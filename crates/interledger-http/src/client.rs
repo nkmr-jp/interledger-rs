@@ -89,17 +89,17 @@ where
             let header = format!("Bearer {}", token.expose_secret());
             let body = request.prepare.as_ref().to_owned();
 
-            let request_id = chrono::Local::now().timestamp_nanos(); // debug param
+            let trace_id = chrono::Local::now().timestamp_nanos(); // debug param
 
             sinfo!(&LOGGING.logger, "ILP_REQUEST_HTTP";
-                "request_id" => format!("{:?}", request_id),
+                "trace_id" => format!("{:?}", trace_id),
                 "function" => "OutgoingService.send_request()",
                 "HttpRequest_url" => format!("{:?}", url),
                 "HttpRequest_header_authorization" => format!("{:?}", &header),
                 "HttpRequest_body" => format!("{:?}", body),
             );
             sinfo!(&LOGGING.logger, "ILP_REQUEST_PACKET";
-                "request_id" => format!("{:?}", request_id),
+                "trace_id" => format!("{:?}", trace_id),
                 "function" => "OutgoingService.send_request()",
                 "OutgoingRequest_from" => format!("{:?}", request.from),
                 "OutgoingRequest_to" => format!("{:?}", request.to),
@@ -110,7 +110,7 @@ where
             let resp = self_clone.client
                 .post(url.as_ref())
                 .header("authorization", &header)
-                .header("request_id", request_id)
+                .header("trace_id", trace_id)
                 .body(body)
                 .send()
                 .map_err(move |err| {
@@ -134,13 +134,13 @@ where
                 .await?;
 
             sinfo!(&LOGGING.logger, "ILP_RESPONSE_HTTP";
-                "request_id" => format!("{:?}", request_id),
+                "trace_id" => format!("{:?}", trace_id),
                 "function" => "OutgoingService.send_request()",
                 "HttpResponse" => format!("{:?}", resp),
             );
             let ilp_result = parse_packet_from_response(resp, ilp_address_clone).await;
             sinfo!(&LOGGING.logger, "ILP_RESPONSE_PACKET";
-                "request_id" => format!("{:?}", request_id),
+                "trace_id" => format!("{:?}", trace_id),
                 "function" => "OutgoingService.send_request()",
                 "IlpResult" => format!("{:?}", ilp_result),
             );

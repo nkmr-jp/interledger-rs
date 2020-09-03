@@ -142,10 +142,10 @@ impl SettlementClient {
 
         // Make the POST request future
 
-        let request_id = chrono::Local::now().timestamp_nanos(); // debug param
+        let trace_id = chrono::Local::now().timestamp_nanos(); // debug param
         let body = &json!(Quantity::new(amount, asset_scale));
         sinfo!(&LOGGING.logger, "SETTLEMENT_REQUEST";
-                "request_id" => format!("{:?}", request_id),
+                "trace_id" => format!("{:?}", trace_id),
                 "function" => "SettlementClient.send_settlement_once()",
                 "HttpRequest_url" => format!("{:?}", settlement_engine_url.as_ref()),
                 "HttpRequest_header_Idempotency-Key" => format!("{:?}", idempotency_uuid),
@@ -156,13 +156,13 @@ impl SettlementClient {
             .client
             .post(settlement_engine_url.as_ref())
             .header("Idempotency-Key", idempotency_uuid)
-            .header("request_id", request_id)
+            .header("trace_id", trace_id)
             .json(body)
             .send()
             .await?;
 
         sinfo!(&LOGGING.logger, "SETTLEMENT_RESPONSE";
-                "request_id" => format!("{:?}", request_id),
+                "trace_id" => format!("{:?}", trace_id),
                 "function" => "SettlementClient.send_settlement_once()",
                 "HttpResponse" => format!("{:?}", response),
             );
