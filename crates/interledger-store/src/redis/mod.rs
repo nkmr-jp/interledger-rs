@@ -771,7 +771,7 @@ impl BalanceStore for RedisStore {
             "function" => "BalanceStore.update_balances_for_prepare()",
             "UpdateArg_incoming_amount"=> format!("{:?}", incoming_amount),
             "UpdateArg_from_account_id"=> format!("{:?}", from_account_id),
-            "Updated_balance"=> format!("{:?}", balance),
+            "Result_balance"=> format!("{:?}", balance),
         );
 
         trace!(
