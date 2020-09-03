@@ -55,6 +55,12 @@ thiserror = { version = "1.0.10", default-features = false }
 # redis feature
 redis_crate = { package = "redis", version = "0.15.1", default-features = false, features = ["tokio-rt-core"], optional = true }
 
+json-logger = { path = "../json-logger", version = "0.1.0", default-features = false }
+slog = "2.5.2"
+slog-json = "2.3.0"
+slog-async = "2.5.0"
+chrono = "0.4"
+
 [dev-dependencies]
 env_logger = { version = "0.7.0", default-features = false }
 net2 = { version = "0.2.33", default-features = false }

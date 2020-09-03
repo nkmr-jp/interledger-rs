@@ -68,6 +68,10 @@ use url::Url;
 use uuid::Uuid;
 use zeroize::Zeroize;
 
+use json_logger::LOGGING;
+use slog::{info as sinfo};
+use chrono;
+
 const DEFAULT_POLL_INTERVAL: u64 = 30000; // 30 seconds
 const ACCOUNT_DETAILS_FIELDS: usize = 21;
 
@@ -761,6 +765,15 @@ impl BalanceStore for RedisStore {
             .invoke_async(&mut self.connection.clone())
             .await?;
 
+        let trace_id = chrono::Local::now().timestamp_nanos(); // debug param
+        sinfo!(&LOGGING.logger, "UPDATE_BALANCES_FOR_PREPARE";
+            "trace_id" => format!("{:?}", trace_id),
+            "function" => "BalanceStore.update_balances_for_prepare()",
+            "UpdateArg_incoming_amount"=> format!("{:?}", incoming_amount),
+            "UpdateArg_from_account_id"=> format!("{:?}", from_account_id),
+            "Updated_balance"=> format!("{:?}", balance),
+        );
+
         trace!(
             "Processed prepare with incoming amount: {}. Account {} has balance (including prepaid amount): {} ",
             incoming_amount, from_account_id, balance
@@ -778,6 +791,16 @@ impl BalanceStore for RedisStore {
             .arg(outgoing_amount)
             .invoke_async(&mut self.connection.clone())
             .await?;
+
+        let trace_id = chrono::Local::now().timestamp_nanos(); // debug param
+        sinfo!(&LOGGING.logger, "UPDATE_BALANCES_FOR_FULFILL";
+            "trace_id" => format!("{:?}", trace_id),
+            "function" => "BalanceStore.update_balances_for_fulfill()",
+            "UpdateArg_to_account_id"=> format!("{:?}", to_account_id),
+            "UpdateArg_outgoing_amount"=> format!("{:?}", outgoing_amount),
+            "Result_balance"=> format!("{:?}", balance),
+            "Result_amount_to_settle"=> format!("{:?}", amount_to_settle),
+        );
 
         trace!(
             "Processed fulfill for account {} for outgoing amount {}. Fulfill call result: {} {}",
@@ -803,6 +826,15 @@ impl BalanceStore for RedisStore {
             .arg(incoming_amount)
             .invoke_async(&mut self.connection.clone())
             .await?;
+
+        let trace_id = chrono::Local::now().timestamp_nanos(); // debug param
+        sinfo!(&LOGGING.logger, "UPDATE_BALANCES_FOR_FULFILL";
+            "trace_id" => format!("{:?}", trace_id),
+            "function" => "BalanceStore.update_balances_for_fulfill()",
+            "UpdateArg_from_account_id"=> format!("{:?}", from_account_id),
+            "UpdateArg_outgoing_amount"=> format!("{:?}", incoming_amount),
+            "Result_balance"=> format!("{:?}", balance),
+        );
 
         trace!(
             "Processed reject for incoming amount: {}. Account {} has balance (including prepaid amount): {}",
