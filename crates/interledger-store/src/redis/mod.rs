@@ -828,9 +828,9 @@ impl BalanceStore for RedisStore {
             .await?;
 
         let trace_id = chrono::Local::now().timestamp_nanos(); // debug param
-        sinfo!(&LOGGING.logger, "UPDATE_BALANCES_FOR_FULFILL";
+        sinfo!(&LOGGING.logger, "UPDATE_BALANCES_FOR_REJECT";
             "trace_id" => format!("{:?}", trace_id),
-            "function" => "BalanceStore.update_balances_for_fulfill()",
+            "function" => "BalanceStore.update_balances_for_reject()",
             "UpdateArg_from_account_id"=> format!("{:?}", from_account_id),
             "UpdateArg_outgoing_amount"=> format!("{:?}", incoming_amount),
             "Result_balance"=> format!("{:?}", balance),
