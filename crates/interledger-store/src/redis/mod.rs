@@ -1578,6 +1578,7 @@ impl SettlementStore for RedisStore {
         idempotency_key: Option<String>,
     ) -> Result<(), SettlementStoreError> {
         let idempotency_key = idempotency_key.unwrap();
+        let idempotency_key_clone= idempotency_key.clone();
         let balance: i64 = PROCESS_INCOMING_SETTLEMENT
             .arg(RedisAccountId(account_id))
             .arg(amount)
@@ -1590,6 +1591,17 @@ impl SettlementStore for RedisStore {
             amount,
             balance
         );
+
+        let trace_id = chrono::Local::now().timestamp_nanos(); // debug param
+        sinfo!(&LOGGING.logger, "UPDATE_BALANCE_FOR_INCOMING_SETTLEMENT";
+            "trace_id" => format!("{:?}", trace_id),
+            "function" => "BalanceStore.update_balances_for_prepare()",
+            "UpdateArg_amount"=> format!("{:?}", amount),
+            "UpdateArg_account_id"=> format!("{:?}", account_id),
+            "UpdateArg_idempotency_key"=> format!("{:?}", idempotency_key_clone),
+            "Result_balance"=> format!("{:?}", balance),
+        );
+
         Ok(())
     }
 
